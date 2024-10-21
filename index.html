@@ -15,2185 +15,8 @@
     <link rel="icon" type="image/png" href="icon.png">
     <link rel="apple-touch-icon" href="icon.png" sizes="512x512">
     <title>ChatGPT</title>
-    <style>
-        .requestBody,
-        .response .markdown-body {
-            max-width: calc(100% - 84px);
-        }
+    <link rel="stylesheet" href="/assets/css/app.css?v=1.30">
 
-        .bottom_wrapper {
-            max-width: 100%;
-        }
-
-        * {
-            box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
-        }
-
-        html {
-            width: 100%;
-            height: 100%;
-        }
-
-        :root {
-            --background: #edeff2;
-            --chat-back: #fff;
-            --main-back: #f6f6f6;
-            --active-btn: #e0e0e0;
-            --lighter-active: #eaeaea;
-            --sel-btn: #d0d0d0;
-            --btn-color: #404040;
-            --text-color: #909090;
-            --chat-text-color: #24292f;
-            --response-color: #f7f7f8;
-            --lighter-active-color: #e8e8e8;
-            --lighter-text-color: #555;
-            --svg-color: #808080;
-            --lighter-svg-color: #c0c0c0;
-            --code-color: #f0f0f0;
-            --black-color: #000;
-            --gpt-icon-color: #0d0d0d;
-        }
-
-        [data-theme="dark"] {
-            --background: #1f1f1f;
-            --chat-back: #3c3c3c;
-            --main-back: #333;
-            --active-btn: #1f1f1f;
-            --lighter-active: #151515;
-            --sel-btn: #1e1e1e;
-            --btn-color: #bfbfbf;
-            --text-color: #8f8f8f;
-            --chat-text-color: #c9d1d9;
-            --response-color: #2f2f2f;
-            --lighter-active-color: #171717;
-            --lighter-text-color: #aaa;
-            --svg-color: #7f7f7f;
-            --lighter-svg-color: #3f3f3f;
-            --code-color: #101010;
-            --black-color: #fff;
-            --gpt-icon-color: #ececec;
-        }
-
-        body {
-            background-color: var(--background);
-            width: 100%;
-            height: 100%;
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .chat_window {
-            position: absolute;
-            width: 100%;
-            max-width: 1188px;
-            height: 100%;
-            max-height: 888px;
-            border-radius: 8px;
-            background-color: var(--chat-back);
-            overflow: hidden;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
-        }
-
-        .chat_window>.overlay {
-            width: 100%;
-            height: 100%;
-            position: absolute;
-            left: 0;
-            top: 0;
-            background-color: rgba(0, 0, 0, .3);
-            z-index: 90;
-            cursor: pointer;
-            visibility: hidden;
-            opacity: 0;
-            -webkit-tap-highlight-color: transparent;
-            transition: all 250ms;
-            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        @media screen and (max-width: 1188px) and (max-height: 888px) {
-            #toggleFull {
-                display: none;
-            }
-        }
-
-        @media screen and (min-width: 800px) {
-            .chat_window {
-                display: flex;
-            }
-
-            .mainContent {
-                width: calc(100% - 250px);
-            }
-
-            .chat_window>.nav {
-                position: relative;
-                margin-left: -250px;
-                transition: margin-left 250ms;
-                transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-            }
-
-            .show-nav .nav {
-                margin-left: 0;
-            }
-
-            #sysDialog {
-                max-width: 600px;
-            }
-
-            .sysContent {
-                display: flex;
-            }
-
-            .sysSwitch {
-                flex-shrink: 0;
-                width: 160px;
-            }
-
-            .sysSwitch>div {
-                padding-left: 6px;
-            }
-
-            .sysDetail {
-                margin-left: 12px;
-                margin-top: 5px;
-            }
-        }
-
-        @media screen and (max-width: 800px) {
-            .chat_window {
-                display: block;
-            }
-
-            .mainContent {
-                width: 100%;
-            }
-
-            .chat_window>.nav {
-                position: absolute !important;
-                left: -250px;
-                transition: left 250ms;
-                transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-            }
-
-            .show-nav .nav {
-                left: 0;
-                box-shadow: rgba(0, 0, 0, 0.2) 0px 8px 10px -5px, rgba(0, 0, 0, 0.14) 0px 16px 24px 2px, rgba(0, 0, 0, 0.12) 0px 6px 30px 5px;
-            }
-
-            .show-nav .overlay {
-                visibility: visible;
-                opacity: 1;
-            }
-
-            #sysDialog {
-                max-width: 400px;
-            }
-
-            .sysSwitch {
-                display: flex;
-            }
-
-            .sysSwitch>div {
-                width: 50%;
-                justify-content: center;
-            }
-
-            .sysDetail {
-                margin-top: 8px;
-            }
-        }
-
-        .full_window {
-            max-width: none;
-            max-height: none;
-        }
-
-        .chat_window>.nav {
-            width: 250px;
-            height: 100%;
-            border-right: 1px solid var(--active-btn);
-            background-color: var(--main-back);
-            top: 0;
-            z-index: 99;
-            flex-shrink: 0;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .mainContent {
-            height: 100%;
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            flex: 1;
-        }
-
-        .top_menu {
-            background-color: var(--main-back);
-            width: 100%;
-            height: 46px;
-            padding: 3px 0;
-        }
-
-        .top_menu .toggler {
-            margin-left: 8px;
-            width: 40px;
-            height: 40px;
-            float: left;
-            padding: 5px 7px;
-            border-radius: 4px;
-            cursor: pointer;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        .top_menu .toggler:hover {
-            background: var(--active-btn);
-        }
-
-        .top_menu .toggler .button {
-            width: 26px;
-            height: 4px;
-            border-radius: 4px;
-            position: absolute;
-            pointer-events: none;
-        }
-
-        .top_menu .toggler .button.close {
-            margin-top: 3px;
-            background-color: #99c959;
-        }
-
-        .top_menu .toggler .button.minimize {
-            margin-top: 13px;
-            background-color: #f8b26a;
-        }
-
-        .top_menu .toggler .button.maximize {
-            margin-top: 23px;
-            background-color: #e15b64;
-        }
-
-        .top_menu .title {
-            color: var(--text-color);
-            height: 40px;
-            position: relative;
-            pointer-events: none;
-        }
-
-        #selector {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            padding: 0 4px 0 10px;
-            cursor: pointer;
-            font-size: 20px;
-            line-height: 40px;
-            transform: translate(-50%, -50%);
-            pointer-events: auto;
-            border-radius: 4px;
-            -webkit-user-select: none;
-            user-select: none;
-            display: flex;
-            align-items: center;
-        }
-
-        #selector:hover {
-            background-color: var(--active-btn);
-        }
-
-        #modelVer {
-            margin-left: 4px;
-            margin-right: 2px;
-        }
-
-        .messages {
-            position: relative;
-            flex: 1;
-            overflow-x: hidden;
-            overflow-y: auto;
-            font-size: 16px;
-            color: var(--chat-text-color);
-            text-align: center;
-        }
-
-        .messages::-webkit-scrollbar,
-        #chatlog .markdown-body pre>code::-webkit-scrollbar,
-        #setDialog::-webkit-scrollbar,
-        .allList::-webkit-scrollbar,
-        .sysDetail::-webkit-scrollbar,
-        #apiSelect::-webkit-scrollbar {
-            width: 10px;
-            height: 10px;
-        }
-
-        .messages::-webkit-scrollbar-track,
-        #chatlog .markdown-body pre>code::-webkit-scrollbar-track,
-        #setDialog::-webkit-scrollbar-track,
-        .allList::-webkit-scrollbar-track,
-        .sysDetail::-webkit-scrollbar-track,
-        #apiSelect::-webkit-scrollbar-track {
-            background-clip: padding-box;
-            background: transparent;
-            border: none;
-        }
-
-        .messages::-webkit-scrollbar-corner,
-        #chatlog .markdown-body pre>code::-webkit-scrollbar-corner,
-        #setDialog::-webkit-scrollbar-corner,
-        .allList::-webkit-scrollbar-corner,
-        .sysDetail::-webkit-scrollbar-corner,
-        #apiSelect::-webkit-scrollbar-corner {
-            background-color: transparent;
-        }
-
-        .messages::-webkit-scrollbar-thumb,
-        #chatlog .markdown-body pre>code::-webkit-scrollbar-thumb,
-        #setDialog::-webkit-scrollbar-thumb,
-        .allList::-webkit-scrollbar-thumb,
-        .sysDetail::-webkit-scrollbar-thumb,
-        #apiSelect::-webkit-scrollbar-thumb {
-            background-color: rgba(0, 0, 0, 0.1);
-            background-clip: padding-box;
-            border: solid transparent;
-            border-radius: 10px;
-        }
-
-        .messages::-webkit-scrollbar-thumb:hover,
-        #chatlog .markdown-body pre>code::-webkit-scrollbar-thumb:hover,
-        #setDialog::-webkit-scrollbar-thumb:hover,
-        .allList::-webkit-scrollbar-thumb:hover,
-        .sysDetail::-webkit-scrollbar-thumb:hover,
-        #apiSelect::-webkit-scrollbar-thumb:hover {
-            background-color: rgba(0, 0, 0, 0.4);
-        }
-
-        #chatlog {
-            word-wrap: break-word;
-            text-align: start;
-        }
-
-        .chatAvatar {
-            margin: 14px 12px 13px 12px;
-            width: 30px;
-            height: 30px;
-            flex-shrink: 0;
-            border-radius: 2px;
-        }
-
-        .response>.chatAvatar {
-            margin-top: 15px;
-            margin-bottom: 15px;
-        }
-
-        .gptAvatar>svg {
-            margin-top: 3px;
-            margin-left: 3px;
-            fill: var(--gpt-icon-color);
-        }
-
-        .chatAvatar>img {
-            display: block;
-            width: 100%;
-            height: 100%;
-            border-radius: 2px;
-        }
-
-        .modelAvatar>svg,
-        .chatAvatar>svg {
-            display: block;
-        }
-
-        #chatlog .request {
-            position: relative;
-            display: flex;
-            justify-content: center;
-        }
-
-        .requestBody {
-            white-space: pre-wrap;
-            margin: 18px 0;
-            flex: 1;
-        }
-
-        #chatlog .response {
-            background: var(--response-color);
-            position: relative;
-            display: flex;
-            justify-content: center;
-        }
-
-        .response .markdown-body {
-            margin: 18px 0;
-            flex: 1;
-            background: var(--response-color) !important;
-        }
-
-        #chatlog .markdown-body a {
-            padding: 0 1px 0 2px;
-        }
-
-        #chatlog .markdown-body pre {
-            padding: 10px 10px 5px 10px;
-            position: relative;
-            background: var(--code-color);
-        }
-
-        #chatlog .markdown-body .mermaid {
-            margin-bottom: 8px;
-            padding: 0 10px 0 10px;
-            position: relative;
-            background: var(--code-color);
-            border-radius: 6px;
-        }
-
-        .mermaid>svg {
-            cursor: pointer;
-            max-height: 600px;
-            display: block;
-        }
-
-        #chatlog .markdown-body pre>code {
-            overflow-x: auto;
-            display: block;
-        }
-
-        #chatlog .markdown-body ul {
-            list-style-type: disc;
-        }
-
-        .m-mdic-copy-wrapper {
-            position: absolute;
-            top: 5px;
-            right: 16px;
-            z-index: 1;
-            -webkit-user-select: none;
-            user-select: none;
-        }
-
-        .m-mdic-copy-wrapper span.u-mdic-copy-code_lang {
-            position: absolute;
-            top: 3px;
-            right: calc(100% + 4px);
-            font-family: system-ui;
-            font-size: 12px;
-            line-height: 18px;
-            color: #bbb;
-        }
-
-        .m-mdic-copy-wrapper div.u-mdic-copy-notify {
-            position: absolute;
-            top: 0;
-            right: 0;
-            padding: 3px 6px;
-            border: 0;
-            border-radius: 3px;
-            background: none;
-            font-family: system-ui;
-            font-size: 12px;
-            line-height: 18px;
-            color: var(--lighter-text-color);
-            outline: none;
-            right: 100%;
-            padding-right: 4px;
-        }
-
-        .m-mdic-copy-wrapper button.u-mdic-copy-btn {
-            position: relative;
-            top: 0;
-            right: 0;
-            padding: 3px 6px;
-            border: 0;
-            border-radius: 3px;
-            background: none;
-            font-family: system-ui;
-            font-size: 12px;
-            line-height: 18px;
-            color: #bbb;
-            outline: none;
-            cursor: pointer;
-            transition: color 250ms;
-        }
-
-        .m-mdic-copy-wrapper span.u-mdic-copy-code_lang::before,
-        .m-mdic-copy-wrapper div.u-mdic-copy-notify::before,
-        .m-mdic-copy-wrapper button.u-mdic-copy-btn::before {
-            content: attr(text);
-        }
-
-        .m-mdic-copy-wrapper button.u-mdic-copy-btn:hover {
-            color: var(--lighter-text-color);
-        }
-
-        #stopChat {
-            display: none;
-            margin: 0 auto;
-            margin-top: 3px;
-            width: 80px;
-            height: 32px;
-            text-align: center;
-            line-height: 32px;
-            color: white;
-            background: #f8b26a;
-            cursor: pointer;
-            border-radius: 3px;
-            position: sticky;
-            bottom: 2px;
-            justify-content: center;
-            align-items: center;
-        }
-
-        #stopChat>svg {
-            margin-right: 8px;
-        }
-
-        #stopChat:hover {
-            background: #f0aa60;
-        }
-
-        .bottom_wrapper {
-            position: relative;
-            width: 100%;
-            padding: 10px 10px;
-            margin: 0 auto;
-        }
-
-        .bottom_wrapper .message_input_wrapper {
-            border: none;
-            width: calc(100% - 139px);
-            position: relative;
-            text-align: left;
-        }
-
-        .bottom_wrapper .message_input_wrapper .message_input_text {
-            border-radius: 4px;
-            border: none;
-            outline: none;
-            resize: none;
-            background-color: var(--main-back);
-            color: var(--chat-text-color);
-            height: 47px;
-            font-size: 16px;
-            max-height: 200px;
-            padding: 13px 0 13px 13px;
-            width: 100%;
-            display: block;
-            transition: background-color 250ms;
-        }
-
-        .bottom_wrapper .message_input_wrapper .message_input_text:focus {
-            background-color: var(--code-color);
-        }
-
-        .bottom_wrapper .message_input_wrapper .message_input_text::-webkit-scrollbar {
-            display: none;
-            width: 0;
-            height: 0;
-        }
-
-        #sendbutton {
-            width: 80px;
-            height: 47px;
-            font-size: 18px;
-            font-weight: bold;
-            border-radius: 3px;
-            background-color: #b8da8b;
-            border: none;
-            padding: 0;
-            color: #fff;
-            cursor: pointer;
-            transition: all 250ms;
-            text-align: center;
-            float: right;
-            position: absolute;
-            right: 63px;
-            bottom: 10px;
-            cursor: not-allowed;
-        }
-
-        .activeSendBtn {
-            background-color: #99c959 !important;
-            cursor: pointer !important;
-        }
-
-        .activeSendBtn:hover {
-            background-color: #90c050 !important;
-        }
-
-        .clearConv {
-            position: absolute;
-            right: 10px;
-            bottom: 10px;
-            width: 47px;
-            height: 47px;
-            border-radius: 3px;
-            background: var(--text-color);
-            border: none;
-            color: #fff;
-            cursor: pointer;
-        }
-
-        .clearConv>svg {
-            margin: 0 auto;
-        }
-
-        .clearConv:hover {
-            background: var(--svg-color);
-        }
-
-        .clearConv svg:first-child {
-            display: none;
-        }
-
-        .clearConv svg:nth-child(2) {
-            display: block;
-        }
-
-        .closeConv {
-            background: var(--active-btn);
-        }
-
-        .closeConv:hover {
-            background: var(--lighter-active-color);
-        }
-
-        .closeConv svg:first-child {
-            display: block;
-        }
-
-        .closeConv svg:nth-child(2) {
-            display: none;
-        }
-
-        .loaded>span {
-            display: inline-block;
-        }
-
-        .loaded>svg {
-            display: none;
-        }
-
-        .loading {
-            background: var(--active-btn) !important;
-        }
-
-        .loading>span {
-            display: none;
-        }
-
-        .loading>svg {
-            display: block;
-        }
-
-        .switch-slide {
-            display: inline-block;
-            vertical-align: middle;
-        }
-
-        .switch-slide-label {
-            display: block;
-            width: 38px;
-            height: 18px;
-            background: var(--text-color);
-            border-radius: 30px;
-            cursor: pointer;
-            position: relative;
-            -webkit-transition: all 250ms;
-            transition: all 250ms;
-        }
-
-        .switch-slide-label:after {
-            content: "";
-            display: block;
-            width: 16px;
-            height: 16px;
-            border-radius: 100%;
-            background: #fff;
-            box-shadow: 0 1px 1px rgba(0, 0, 0, .1);
-            position: absolute;
-            left: 1px;
-            top: 1px;
-            -webkit-transform: translateZ(0);
-            transform: translateZ(0);
-            -webkit-transition: all 250ms;
-            transition: all 250ms;
-        }
-
-        .switch-slide input:checked+label {
-            background: #99c959;
-            -webkit-transition: all 250ms;
-            transition: all 250ms;
-        }
-
-        .switch-slide input:checked+label:after {
-            left: 21px;
-        }
-
-        .settings {
-            margin-right: 10px;
-            display: flex;
-            position: absolute;
-            right: 0;
-            top: 3px;
-        }
-
-        .setBtn {
-            margin-left: 2px;
-            cursor: pointer;
-            padding: 5px;
-            border: none;
-            background-color: transparent;
-            border-radius: 4px;
-        }
-
-        .setBtn>svg {
-            display: block;
-            color: var(--text-color);
-        }
-
-        .setBtn:hover {
-            background: var(--active-btn);
-        }
-
-        #setting {
-            right: 15px;
-        }
-
-        #toggleFull {
-            right: 56px;
-        }
-
-        #toggleLight *,
-        #toggleFull * {
-            pointer-events: none;
-        }
-
-        .showSetting {
-            background: var(--lighter-svg-color) !important;
-        }
-
-        .showModels {
-            background: var(--active-btn) !important;
-        }
-
-        #modelDialog {
-            color: var(--btn-color);
-            position: absolute;
-            z-index: 2;
-            background: var(--main-back);
-            width: 240px;
-            left: 50%;
-            transform: translateX(-50%);
-            top: 46px;
-            overflow-y: auto;
-            max-height: calc(100% - 55px);
-            -webkit-user-select: none;
-            user-select: none;
-            border-radius: 4px;
-            padding: 8px 5px 8px 5px;
-            box-shadow: 0 0 6px rgba(0, 0, 0, 0.15);
-        }
-
-        .modelSingle {
-            height: 40px;
-            border-radius: 3px;
-            cursor: pointer;
-            line-height: 40px;
-            display: flex;
-            align-items: center;
-            position: relative;
-        }
-
-        .modelSingle * {
-            pointer-events: none;
-        }
-
-        .modelSingle:hover {
-            background-color: var(--active-btn);
-        }
-
-        .activeModel::before {
-            content: "";
-            position: absolute;
-            right: 15px;
-            top: 7px;
-            width: 8px;
-            height: 16px;
-            border-color: #99c959;
-            border-style: solid;
-            border-width: 0 4px 4px 0;
-            transform: rotate(45deg);
-        }
-
-        .modelAvatar {
-            margin-left: 6px;
-            margin-right: 10px;
-            width: 30px;
-            flex-shrink: 0;
-            border-radius: 2px;
-            height: 30px;
-        }
-
-        #setDialog {
-            color: var(--btn-color);
-            position: absolute;
-            z-index: 2;
-            background: var(--main-back);
-            width: 320px;
-            right: 6px;
-            top: 46px;
-            overflow-y: auto;
-            max-height: calc(100% - 55px);
-            -webkit-user-select: none;
-            user-select: none;
-            border-radius: 5px;
-            padding: 8px 12px 8px 12px;
-            box-shadow: 0 0 6px rgba(0, 0, 0, 0.15);
-        }
-
-        #setDialog input {
-            width: 100%;
-        }
-
-        #setDialog .inlineTitle {
-            display: inline-block;
-            width: 88px;
-            line-height: 16px;
-            vertical-align: middle;
-        }
-
-        #convOption,
-        #speechOption,
-        #speechDetail,
-        #recOption {
-            margin-bottom: 6px;
-        }
-
-        #convOption>div,
-        #speechOption>div,
-        #speechDetail>div,
-        #recOption div {
-            margin-top: 7px;
-        }
-
-        #voiceRecSetting select,
-        #speechDetail select {
-            background: var(--chat-back);
-            color: var(--chat-text-color);
-        }
-
-        .inputTextClass {
-            outline: none;
-            border-radius: 2px;
-            margin-top: 3px;
-            height: 32px;
-            font-size: 15px;
-            padding-left: 6px;
-            background: var(--chat-back);
-            color: var(--chat-text-color);
-            border: none;
-        }
-
-        .areaTextClass {
-            width: 100%;
-            height: 80px;
-            display: block;
-            resize: none;
-            padding: 6px;
-        }
-
-        input[type="range"] {
-            -webkit-appearance: none;
-            appearance: none;
-            display: block;
-            margin: 4px 0 3px 0;
-            height: 8px;
-            background: var(--text-color);
-            border-radius: 5px;
-            background-image: linear-gradient(#99c959, #99c959);
-            background-size: 100% 100%;
-            background-repeat: no-repeat;
-        }
-
-        input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            height: 15px;
-            width: 15px;
-            border-radius: 50%;
-            background: #99c959;
-            cursor: ew-resize;
-        }
-
-        input[type=range]::-webkit-slider-runnable-track {
-            -webkit-appearance: none;
-            box-shadow: none;
-            border: none;
-            background: transparent;
-        }
-
-        .justSetLine {
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .justSetBtn {
-            height: 32px;
-            border-radius: 3px;
-            line-height: 32px;
-            background: var(--lighter-active);
-            text-align: center;
-            padding: 0px 8px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-        }
-
-        .justSetBtn:hover {
-            background-color: var(--sel-btn);
-        }
-
-        .justSetBtn>svg {
-            margin-right: 3px;
-        }
-
-        .readyTestVoice>div:not(:first-child) {
-            display: none;
-        }
-
-        .pauseTestVoice>div:nth-child(1),
-        .pauseTestVoice>div:nth-child(3) {
-            display: none;
-        }
-
-        .resumeTestVoice>div:nth-child(1),
-        .resumeTestVoice>div:nth-child(2) {
-            display: none;
-        }
-
-        .presetSelect>div {
-            display: inline-block;
-        }
-
-        .presetSelect select {
-            outline: none;
-            border-radius: 3px;
-            width: 128px;
-            border-color: rgba(0, 0, 0, .3);
-            background: var(--chat-back);
-            color: var(--chat-text-color);
-        }
-
-        .selectDef {
-            display: flex;
-            justify-content: space-between;
-            font-size: 13px;
-            color: var(--text-color);
-        }
-
-        #preSetSpeech {
-            width: 100%;
-            outline: none;
-            height: 30px;
-            font-size: 14px;
-            margin-top: 5px;
-            border-radius: 3px;
-            border-color: rgba(0, 0, 0, .3);
-        }
-
-        .mdOption {
-            flex-shrink: 0;
-            position: relative;
-            width: 30px;
-            pointer-events: none;
-        }
-
-        .mdOption>div {
-            pointer-events: auto;
-            cursor: pointer;
-        }
-
-        .mdOption svg * {
-            pointer-events: none;
-        }
-
-        .refreshReq svg:not(:first-child) {
-            display: none;
-        }
-
-        .halfRefReq svg:not(:nth-child(2)) {
-            display: none;
-        }
-
-        .optionItems {
-            position: absolute;
-            bottom: -12px;
-            display: flex;
-            justify-content: space-between;
-            visibility: hidden;
-            z-index: 1;
-            color: var(--svg-color);
-        }
-
-        .optionItems:hover {
-            visibility: visible;
-        }
-
-        .request:hover .optionItems,
-        .request:hover .voiceCls,
-        .response:hover .optionItems,
-        .response:hover .voiceCls {
-            visibility: visible;
-        }
-
-        .optionItem {
-            border-radius: 9px;
-            height: 24px;
-            width: 32px;
-            border: 1px solid var(--active-btn);
-            background-color: var(--response-color);
-            display: flex !important;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .optionItem * {
-            pointer-events: none;
-        }
-
-        .optionItem:hover {
-            background: var(--active-btn);
-        }
-
-        .voiceCls {
-            position: relative;
-            height: 100%;
-            visibility: hidden;
-            display: flex;
-            align-items: center;
-        }
-
-        .voiceCls>svg {
-            color: var(--lighter-svg-color);
-            display: block;
-            margin-left: 5px;
-            position: relative;
-        }
-
-        .voiceCls:hover>svg {
-            color: var(--svg-color);
-        }
-
-        .showVoiceCls,
-        .showVoiceCls .markdown-body {
-            background: var(--active-btn) !important;
-        }
-
-        .showVoiceCls .voiceCls {
-            visibility: visible !important;
-        }
-
-        .showEditReq {
-            position: sticky !important;
-            top: 0;
-            bottom: 0;
-            z-index: 1;
-        }
-
-        .showEditReq,
-        .showEditReq .markdown-body {
-            background: var(--active-btn) !important;
-        }
-
-        .readyVoice svg:not(:first-child) {
-            display: none;
-        }
-
-        .pauseVoice svg:not(:nth-child(2)) {
-            display: none;
-        }
-
-        .resumeVoice svg:not(:nth-child(3)) {
-            display: none;
-        }
-
-        #voiceTypes>span {
-            border-radius: 3px;
-            margin-left: 4px;
-            height: 28px;
-            line-height: 26px;
-            display: inline-block;
-            cursor: pointer;
-            padding: 1px 5px;
-        }
-
-        #voiceTypes>span:hover {
-            background: var(--active-btn);
-        }
-
-        .selVoiceType {
-            background: var(--sel-btn) !important;
-        }
-
-        .navHeader {
-            width: 100%;
-            padding: 5px 10px;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        #newChat {
-            text-align: center;
-            width: 80%;
-            height: 40px;
-            border-radius: 3px;
-            background: var(--lighter-active-color);
-            color: var(--btn-color);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            -webkit-user-select: none;
-            user-select: none;
-            cursor: pointer;
-            flex: 1;
-        }
-
-        .navHeader>div:hover {
-            background: var(--active-btn) !important;
-        }
-
-        #newChat>svg {
-            margin-right: 2px;
-        }
-
-        #newFolder {
-            height: 40px;
-            width: 40px;
-            margin-left: 10px;
-            border-radius: 3px;
-            color: var(--btn-color);
-            cursor: pointer;
-            position: relative;
-            background: var(--lighter-active-color);
-            -webkit-user-select: none;
-            user-select: none;
-        }
-
-        #newFolder>svg {
-            display: block;
-            margin: 8px auto;
-        }
-
-        .extraChat {
-            padding: 2px 10px 6px 10px;
-            position: relative;
-        }
-
-        #searchChat {
-            width: 100%;
-            height: 36px;
-            padding-left: 10px;
-            padding-right: 45px;
-            font-size: 16px;
-            outline: none;
-            border: none;
-            color: var(--chat-text-color);
-            background: var(--lighter-active-color);
-            border-radius: 3px;
-            -webkit-user-select: none;
-            user-select: none;
-        }
-
-        #searchChat:focus {
-            background: var(--active-btn)
-        }
-
-        #searchChat:placeholder-shown+#clearSearch {
-            display: none;
-        }
-
-        #clearSearch {
-            position: absolute;
-            right: 34px;
-            top: 8px;
-            cursor: pointer;
-            color: var(--btn-color);
-        }
-
-        #clearSearch:hover {
-            color: var(--black-color);
-        }
-
-        #clearSearch>svg {
-            display: block;
-        }
-
-        .seledSearch {
-            background: var(--lighter-svg-color) !important;
-        }
-
-        #matchCaseSearch {
-            position: absolute;
-            right: 12px;
-            top: 8px;
-            cursor: pointer;
-            border-radius: 3px;
-            color: var(--btn-color);
-        }
-
-        #matchCaseSearch:hover {
-            background: var(--sel-btn);
-        }
-
-        #matchCaseSearch>svg {
-            display: block;
-        }
-
-        .navFooter {
-            padding-bottom: 8px;
-        }
-
-        .navFooter .divider {
-            width: 100%;
-            border-top: 1px solid var(--active-btn);
-            margin: 4px 0;
-        }
-
-        .navFunc {
-            padding-top: 5px;
-            display: flex;
-            justify-content: space-around;
-        }
-
-        .navFunc svg {
-            display: block;
-        }
-
-        .navFunc>div,
-        .navFunc>label {
-            border-radius: 20px;
-            text-align: center;
-            padding: 8px 8px;
-            color: var(--btn-color);
-            font-size: 14px;
-            cursor: pointer;
-        }
-
-        .navFunc>div:hover,
-        .navFunc>label:hover {
-            background: var(--active-btn);
-        }
-
-        .navFooter .links {
-            text-align: center;
-            -webkit-user-select: none;
-            user-select: none;
-        }
-
-        .navFooter .links a {
-            color: var(--btn-color);
-            text-decoration: none;
-        }
-
-        .navFooter .links a:hover {
-            color: var(--chat-text-color) !important;
-        }
-
-        .navFooter .links a:visited {
-            color: var(--btn-color);
-        }
-
-        .allList {
-            width: 100%;
-            position: relative;
-            flex: 1;
-            overflow-y: auto;
-        }
-
-        #chatList {
-            min-height: 50px;
-        }
-
-        .dragingLi {
-            filter: brightness(90%);
-        }
-
-        .dragingChat {
-            background: var(--lighter-active-color);
-        }
-
-        .expandFolder>.headLi>svg {
-            transform: rotate(90deg);
-        }
-
-        .expandFolder>.chatsInFolder {
-            display: block;
-        }
-
-        .chatsInFolder {
-            display: none;
-            margin-left: 22px;
-            padding-left: 2px;
-            border-left: 1px solid var(--text-color);
-        }
-
-        .headLi,
-        .chatLi {
-            cursor: pointer;
-            width: 100%;
-            height: 50px;
-            color: var(--text-color);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: relative;
-        }
-
-        .headLi *,
-        .chatLi * {
-            pointer-events: none;
-        }
-
-        .headLi>svg,
-        .chatLi>svg {
-            margin-left: 10px;
-            color: var(--btn-color);
-            pointer-events: none;
-        }
-
-        .folderOption svg,
-        .chatOption svg {
-            pointer-events: auto;
-        }
-
-        .headLi svg *,
-        .chatLi svg * {
-            pointer-events: none;
-        }
-
-        .headLi .folderInfo {
-            position: absolute;
-            left: 40px;
-            height: 40px;
-            max-width: calc(100% - 115px);
-        }
-
-        .chatLi .chatInfo {
-            position: absolute;
-            left: 40px;
-            height: 40px;
-            max-width: calc(100% - 90px);
-        }
-
-        .folderInfo *,
-        .chatInfo * {
-            -webkit-user-select: none;
-            user-select: none;
-        }
-
-        .chatInfo span {
-            background: #f8b26a;
-        }
-
-        .headLi .folderName,
-        .chatLi .chatName {
-            color: var(--btn-color);
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            overflow: hidden;
-            line-height: 20px;
-            height: 20px;
-        }
-
-        .headLi .folderNum,
-        .chatLi .chatPre {
-            color: var(--btn-color);
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            overflow: hidden;
-            font-size: 12px;
-            line-height: 20px;
-            height: 20px;
-        }
-
-        .headLi .folderOption,
-        .chatLi .chatOption {
-            visibility: hidden;
-            display: flex;
-            color: #777;
-            margin-right: 2px;
-        }
-
-        .folderLi .chatLi>svg {
-            margin-left: 5px;
-        }
-
-        .folderLi .chatLi .chatInfo {
-            left: 35px;
-            max-width: calc(100% - 85px);
-        }
-
-        .folderLi .chatLi #activeChatEdit {
-            left: 32px;
-            width: calc(100% - 60px)
-        }
-
-        .folderLi:hover {
-            background: var(--lighter-active);
-        }
-
-        .chatLi:hover {
-            background: var(--active-btn);
-        }
-
-        .headLi:hover .folderOption,
-        .chatLi:hover .chatOption {
-            visibility: visible !important;
-        }
-
-        .activeFolder,
-        .activeChatLi {
-            background: var(--sel-btn) !important;
-        }
-
-        .activeChatLi .chatOption {
-            visibility: visible !important;
-        }
-
-        .folderOption>svg:hover,
-        .chatOption>svg:hover {
-            color: #444;
-        }
-
-        #activeChatEdit {
-            position: absolute;
-            left: 37px;
-            font-size: 16px;
-            border-radius: 2px;
-            color: var(--chat-text-color);
-            background: var(--chat-back);
-            outline: none;
-            border: none;
-            pointer-events: auto;
-            height: 24px;
-            line-height: 24px;
-            width: calc(100% - 65px);
-            padding: 20px 3px;
-            z-index: 1;
-        }
-
-        #loadMask {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            z-index: 100;
-            background-color: var(--background);
-        }
-
-        #loadMask>div {
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%);
-            text-align: center;
-        }
-
-        @keyframes loading {
-
-            0%,
-            100% {
-                transform: scale(0);
-            }
-
-            50% {
-                transform: scale(1);
-            }
-        }
-
-        .loadingCSSIcon {
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: space-evenly;
-        }
-
-        .loadingCSSIcon div {
-            width: 15%;
-            height: 0;
-            padding-bottom: 15%;
-            border-radius: 50%;
-            animation: loading 1s cubic-bezier(0.3, 0, 0.7, 1) infinite;
-        }
-
-        .loadingCSSIcon div:nth-child(1) {
-            background: #e15b64;
-            animation-delay: -0.4s
-        }
-
-        .loadingCSSIcon div:nth-child(2) {
-            background: #f8b26a;
-            animation-delay: -0.2s
-        }
-
-        .loadingCSSIcon div:nth-child(3) {
-            background: #99c959;
-            animation-delay: 0s;
-        }
-
-        #loadMask>div>:first-child {
-            font-size: 40px;
-            color: var(--text-color);
-        }
-
-        #loadMask>div>:last-child {
-            width: 140px;
-            height: 70px;
-            margin: 0 auto;
-        }
-
-        #voiceRec {
-            position: absolute;
-            right: 0;
-            top: 0;
-            width: 47px;
-            height: 100%;
-        }
-
-        .message_if_voice {
-            padding-right: 47px !important;
-        }
-
-        #voiceRecIcon {
-            width: 100%;
-            height: 100%;
-            text-align: center;
-            cursor: pointer;
-            position: relative;
-        }
-
-        #voiceRecIcon:hover>svg {
-            color: var(--svg-color);
-        }
-
-        #voiceRecIcon>svg {
-            width: 25px;
-            height: 25px;
-            color: #b0b0b0;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            margin-top: -12px;
-            margin-left: -13px;
-        }
-
-        #voiceRecIcon>svg .animVoice {
-            display: none;
-        }
-
-        .voiceRecing>svg {
-            color: #99c959 !important;
-        }
-
-        .voiceRecing .animVoice {
-            display: inline !important;
-            transform-origin: 0 64%;
-            animation-duration: 1.5s;
-            animation-name: scaleVoice;
-            animation-timing-function: ease;
-            animation-iteration-count: infinite;
-        }
-
-        .voiceLong .animVoice {
-            display: inline !important;
-            transform-origin: 0 64%;
-            animation-duration: 0.3s;
-            animation-name: longVoice;
-            animation-timing-function: ease-in-out;
-            animation-iteration-count: 1;
-        }
-
-        @keyframes longVoice {
-            0% {
-                transform: scaleY(0);
-            }
-
-            100% {
-                transform: scaleY(1);
-            }
-        }
-
-        @keyframes scaleVoice {
-            0% {
-                transform: scaleY(0.28);
-            }
-
-            20% {
-                transform: scaleY(0.60);
-            }
-
-            28% {
-                transform: scaleY(0.28);
-            }
-
-            36% {
-                transform: scaleY(0.45);
-            }
-
-            44% {
-                transform: scaleY(0.28);
-            }
-
-            52% {
-                transform: scaleY(0.45);
-            }
-
-            62% {
-                transform: scaleY(0.80);
-            }
-
-            72% {
-                transform: scaleY(0.80);
-            }
-
-            90% {
-                transform: scaleY(0.28);
-            }
-
-            100% {
-                transform: scaleY(0.28);
-            }
-        }
-
-        #voiceRecSetting {
-            display: none;
-            position: absolute;
-            top: -70px;
-            left: -26px;
-            z-index: 1;
-            padding: 4px 4px;
-            -webkit-user-select: none;
-            user-select: none;
-            border-radius: 3px;
-            background-color: var(--main-back);
-            box-shadow: 0 0 6px rgba(0, 0, 0, 0.15);
-        }
-
-        #voiceRecSetting select {
-            width: 102px;
-            outline: none;
-            height: 28px;
-            border-radius: 3px;
-            border-color: rgba(0, 0, 0, .3);
-        }
-
-        .presetModelCls label {
-            margin-right: 8px;
-        }
-
-        .presetModelCls select {
-            height: 30px;
-            margin-top: 2px;
-            font-size: 15px;
-        }
-
-        .modelSwitch,
-        .setSwitch {
-            display: flex;
-        }
-
-        .modelSwitch {
-            margin-bottom: 10px;
-            -webkit-user-select: none;
-            user-select: none;
-        }
-
-        .modelSwitch>div,
-        .setSwitch>div {
-            border-radius: 3px;
-            width: calc(100% / 3);
-            height: 32px;
-            line-height: 32px;
-            text-align: center;
-            cursor: pointer;
-        }
-
-        .modelSwitch>div:hover,
-        .setSwitch>div:hover {
-            background-color: var(--active-btn);
-        }
-
-        .activeSwitch {
-            background-color: var(--sel-btn) !important;
-        }
-
-        .checkLoad {
-            height: 32px;
-            border-radius: 3px;
-            line-height: 32px;
-            background: var(--sel-btn);
-            text-align: center;
-            display: flex;
-            justify-content: center;
-            cursor: pointer;
-        }
-
-        .checkLoad:hover {
-            background: var(--lighter-svg-color);
-        }
-
-        .voiceChecking {
-            background-color: var(--lighter-svg-color) !important;
-        }
-
-        .voiceChecking>svg {
-            display: inline !important;
-        }
-
-        .checkLoad>svg {
-            display: none;
-            margin-right: 8px;
-            height: 32px;
-            width: 64px;
-        }
-
-        #preSetSystem {
-            height: 20px;
-            line-height: 20px;
-            vertical-align: top;
-        }
-
-        #sysMask {
-            display: none;
-            position: fixed;
-            z-index: 200;
-            top: 0;
-            left: 0;
-            bottom: 0;
-            right: 0;
-            cursor: pointer;
-            justify-content: center;
-            align-items: center;
-            background: rgba(0, 0, 0, .4);
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        #sysDialog {
-            position: relative;
-            background: var(--chat-back);
-            color: var(--btn-color);
-            cursor: auto;
-            max-height: 100%;
-            width: 88%;
-            display: flex;
-            flex-direction: column;
-            border-radius: 4px;
-            padding: 12px 20px 12px 20px;
-        }
-
-        .sysTitle {
-            font-size: 20px;
-            font-weight: bold;
-            margin-bottom: 8px;
-            -webkit-user-select: none;
-            user-select: none;
-        }
-
-        .sysSwitch,
-        .sysSwitch>div * {
-            pointer-events: none;
-        }
-
-        .sysSwitch>div {
-            border-radius: 3px;
-            height: 32px;
-            line-height: 32px;
-            text-align: center;
-            cursor: pointer;
-            pointer-events: auto;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            -webkit-user-select: none;
-            user-select: none;
-        }
-
-        .sysSwitch>div>svg {
-            margin-right: 4px;
-        }
-
-        .sysSwitch>div:hover {
-            background-color: var(--active-btn);
-        }
-
-        .sysDetail {
-            flex: 1;
-        }
-
-        #closeSet {
-            position: absolute;
-            right: 0px;
-            top: 0px;
-            cursor: pointer;
-            padding: 10px 14px;
-        }
-
-        #closeSet:hover {
-            color: var(--black-color);
-        }
-
-        .setContent {
-            margin-bottom: 10px;
-        }
-
-        .setNotNormalFlow {
-            position: relative;
-        }
-
-        .setTitle {
-            margin-bottom: 6px;
-            font-weight: bold;
-            -webkit-user-select: none;
-            user-select: none;
-        }
-
-        .setDetail {
-            margin: 0 10px;
-            -webkit-user-select: none;
-            user-select: none;
-        }
-
-        .autoSelect>label,
-        .autoSelect>input {
-            cursor: pointer;
-        }
-
-        .dataDetail {
-            display: flex;
-        }
-
-        .dataDetail svg {
-            margin-right: 4px;
-        }
-
-        .dataDetail>div,
-        .dataDetail>label {
-            border-radius: 3px;
-            text-align: center;
-            padding: 6px 8px;
-            margin-right: 12px;
-            color: var(--btn-color);
-            font-size: 15px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .dataDetail>div:hover,
-        .dataDetail>label:hover {
-            background: var(--lighter-active-color);
-        }
-
-        .keyOptionDetail {
-            display: flex;
-            margin-top: 10px;
-        }
-
-        #resetHotKey {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            cursor: pointer;
-            font-size: 15px;
-            color: var(--btn-color);
-            border-radius: 3px;
-            padding: 6px 8px;
-            margin-left: 90px;
-        }
-
-        #resetHotKey>svg {
-            margin-right: 4px;
-        }
-
-        #resetHotKey:hover {
-            background: var(--lighter-active-color);
-        }
-
-        .hotKeyDetail>div {
-            position: relative;
-            height: 30px;
-            margin-bottom: 2px;
-        }
-
-        .hotKeyDetail label {
-            line-height: 30px;
-        }
-
-        .hotKeyDetail select {
-            position: absolute;
-            left: 110px;
-            outline: none;
-            border-radius: 3px;
-            width: 120px;
-            border-color: rgba(0, 0, 0, .3);
-            background: var(--chat-back);
-            color: var(--chat-text-color);
-            height: 30px;
-            font-size: 15px;
-        }
-
-        .avatarDetail {
-            display: flex;
-            margin-top: 2px;
-        }
-
-        .avatarDetail img {
-            border-radius: 2px;
-            width: 32px;
-            height: 32px;
-            flex-shrink: 0;
-            margin-right: 8px;
-            margin-top: 2px;
-        }
-
-        .inputDetail input {
-            outline: none;
-            border-radius: 3px;
-            padding-left: 8px;
-            font-size: 15px;
-            width: 100%;
-            height: 34px;
-            border: 1px solid rgba(0, 0, 0, .3);
-            background: var(--chat-back);
-            color: var(--chat-text-color);
-        }
-
-        .themeDetail {
-            display: flex;
-            width: 180px;
-            justify-content: space-between;
-            pointer-events: none;
-        }
-
-        .themeDetail svg {
-            display: block;
-        }
-
-        .themeDetail>div {
-            pointer-events: auto;
-            border-radius: 20px;
-            text-align: center;
-            padding: 8px 8px;
-            color: var(--btn-color);
-            font-size: 14px;
-            cursor: pointer;
-        }
-
-        .themeDetail>div * {
-            pointer-events: none;
-        }
-
-        .themeDetail>div:hover {
-            background: var(--lighter-active-color);
-        }
-
-        .darkTheme>div:first-child {
-            background: var(--sel-btn);
-        }
-
-        .lightTheme>div:nth-child(2) {
-            background: var(--sel-btn);
-        }
-
-        .autoTheme>div:nth-child(3) {
-            background: var(--sel-btn);
-        }
-
-        .langDetail {
-            width: 110px;
-        }
-
-        .enLang>div:first-child {
-            background: var(--sel-btn);
-        }
-
-        .zhLang>div:nth-child(2) {
-            background: var(--sel-btn);
-        }
-
-        #customAutoSet input {
-            width: 100px;
-            height: 30px;
-            line-height: 30px;
-            font-size: 15px;
-            outline: none;
-            border: 1px solid rgba(0, 0, 0, .3);
-            text-align: center;
-            border-radius: 3px;
-            background: var(--chat-back);
-            color: var(--chat-text-color);
-        }
-
-        #customAutoSet label {
-            margin-right: 8px;
-        }
-
-        .progressBar {
-            position: relative;
-            width: 100%;
-            height: 12px;
-            border-radius: 6px;
-            background: var(--active-btn);
-            overflow: hidden;
-        }
-
-        .nowProgress {
-            position: absolute;
-            left: 0;
-            top: 0;
-            height: 12px;
-            min-width: 1px;
-            border-radius: 6px;
-            background: #99c959;
-        }
-
-        .progressDetail {
-            display: flex;
-            justify-content: space-between;
-            font-size: 15px;
-        }
-
-        .cursorCls {
-            background: var(--chat-text-color);
-            width: 4px;
-            animation: 1s cursor-blinker infinite step-start;
-        }
-
-        @keyframes cursor-blinker {
-            0% {
-                opacity: 0;
-            }
-
-            50% {
-                opacity: 1;
-            }
-
-            100% {
-                opacity: 0;
-            }
-        }
-
-        .apiSelsContainer {
-            position: relative;
-            z-index: 1;
-        }
-
-        #apiSelect {
-            position: absolute;
-            top: 64px;
-            padding: 4px 0;
-            background: var(--chat-back);
-            width: calc(100% - 20px);
-            left: 10px;
-            box-shadow: 0 0 6px rgba(0, 0, 0, 0.15);
-            max-height: 180px;
-            overflow-y: auto;
-            -webkit-user-select: none;
-            user-select: none;
-        }
-
-        #apiSelect>div {
-            pointer-events: auto;
-            cursor: pointer;
-            font-size: 15px;
-            padding: 6px 0 6px 8px;
-            height: 36px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        #apiSelect>div:hover {
-            background: var(--lighter-active-color);
-        }
-
-        #apiSelect>div>span {
-            height: 100%;
-            line-height: 23px;
-            overflow: hidden;
-            white-space: nowrap;
-            text-overflow: ellipsis;
-        }
-
-        #apiSelect>div * {
-            pointer-events: none;
-        }
-
-        .delApiOption:hover {
-            background: var(--lighter-svg-color);
-        }
-
-        .delApiOption {
-            width: 36px;
-            height: 36px;
-            flex-shrink: 0;
-            pointer-events: auto !important;
-        }
-
-        .delApiOption>svg {
-            margin: 6px;
-            display: block;
-        }
-
-        @keyframes textInOut {
-            from {
-                opacity: 0;
-            }
-
-            to {
-                opacity: 1;
-            }
-        }
-
-        .response[data-loading="true"]>.markdown-body>*:not(.cursorCls) {
-            animation: textInOut 0.48s ease-in-out forwards;
-        }
-    </style>
-    <style>
-        /* for katex */
-        .katex {
-            font-size: 1em !important;
-        }
-
-        eq {
-            display: inline-block;
-        }
-
-        eqn {
-            display: block
-        }
-
-        section.eqno {
-            display: flex;
-            flex-direction: row;
-            align-content: space-between;
-            align-items: center;
-        }
-
-        section.eqno>eqn {
-            width: 100%;
-            margin-left: 3em;
-        }
-
-        section.eqno>span {
-            width: 3em;
-            text-align: right;
-        }
-    </style>
     <script>
         let themeMode; // 2: 自动， 1: 浅色，0: 深色
         let autoThemeMode; // 1: 跟随系统，0:自定义时间
@@ -2464,7 +287,7 @@
     </div>
     <div id="loadMask">
         <div>
-            <div>ChatGPT</div>
+            <div>ChatGLM</div>
             <div class="loadingCSSIcon">
                 <div></div>
                 <div></div>
@@ -2544,7 +367,7 @@
                     <div class="button maximize"></div>
                 </div>
                 <div class="title">
-                    <div id="selector"><span id="modelName">ChatGPT</span><span id="modelVer">3.5</span><svg width="16"
+                    <div id="selector"><span id="modelName"></span><span id="modelVer">ChatGLM</span><svg width="16"
                             height="16" style="transform: translateY(1px);">
                             <use xlink:href="#expandIcon" />
                         </svg></div>
@@ -2565,86 +388,7 @@
                     </button>
                 </div>
                 <div id="modelDialog" style="display:none;">
-                    <div class="modelSingle" data-value="gpt-3.5-turbo" data-ver="3.5">
-                        <div class="modelAvatar gptAvatar">
-                            <svg width="24" height="24">
-                                <use xlink:href="#aiIcon"></use>
-                            </svg>
-                        </div>
-                        <div>GPT-3.5</div>
-                    </div>
-                    <div class="modelSingle" data-value="gpt-4" data-ver="4">
-                        <div class="modelAvatar gptAvatar">
-                            <svg width="24" height="24">
-                                <use xlink:href="#aiIcon"></use>
-                            </svg>
-                        </div>
-                        <div>GPT-4</div>
-                    </div>
-                    <div class="modelSingle" data-value="gpt-4-turbo" data-ver="4 Turbo">
-                        <div class="modelAvatar gptAvatar">
-                            <svg width="24" height="24">
-                                <use xlink:href="#aiIcon"></use>
-                            </svg>
-                        </div>
-                        <div>GPT-4 Turbo</div>
-                    </div>
-                    <div class="modelSingle" data-value="gpt-4o" data-ver="4o">
-                        <div class="modelAvatar gptAvatar">
-                            <svg width="24" height="24">
-                                <use xlink:href="#aiIcon"></use>
-                            </svg>
-                        </div>
-                        <div>GPT-4o</div>
-                    </div>
-                    <div class="modelSingle" data-value="gemini-1.0-pro" data-ver="1.0">
-                        <div class="modelAvatar">
-                            <svg width="30" height="30">
-                                <use xlink:href="#geminiIcon"></use>
-                            </svg>
-                        </div>
-                        <div>Gemini 1.0 Pro</div>
-                    </div>
-                    <div class="modelSingle" data-value="gemini-1.5-pro" data-ver="1.5 Pro">
-                        <div class="modelAvatar">
-                            <svg width="30" height="30">
-                                <use xlink:href="#geminiIcon"></use>
-                            </svg>
-                        </div>
-                        <div>Gemini 1.5 Pro</div>
-                    </div>
-                    <div class="modelSingle" data-value="gemini-1.5-flash" data-ver="1.5 Flash">
-                        <div class="modelAvatar">
-                            <svg width="30" height="30">
-                                <use xlink:href="#geminiIcon"></use>
-                            </svg>
-                        </div>
-                        <div>Gemini 1.5 Flash</div>
-                    </div>
-                    <div class="modelSingle" data-value="claude-3-haiku-20240307" data-ver="3 Haiku">
-                        <div class="modelAvatar">
-                            <svg width="30" height="30">
-                                <use xlink:href="#claudeIcon"></use>
-                            </svg>
-                        </div>
-                        <div>Claude 3 Haiku</div>
-                    </div>
-                    <div class="modelSingle" data-value="claude-3-sonnet-20240229" data-ver="3 Sonnet">
-                        <div class="modelAvatar">
-                            <svg width="30" height="30">
-                                <use xlink:href="#claudeIcon"></use>
-                            </svg>
-                        </div>
-                        <div>Claude 3 Sonnet</div>
-                    </div>
-                    <div class="modelSingle" data-value="claude-3-opus-20240229" data-ver="3 Opus">
-                        <div class="modelAvatar">
-                            <svg width="30" height="30">
-                                <use xlink:href="#claudeIcon"></use>
-                            </svg>
-                        </div>
-                        <div>Claude 3 Opus</div>
-                    </div>
+                    
                 </div>
                 <div id="setDialog" style="display:none;">
                     <div class="setSwitch">
@@ -2915,16 +659,44 @@
                     </div>
                 </div>
             </div>
-            <div class="messages">
+            <div class="messages" onscroll="handleScroll()">
                 <div id="chatlog"></div>
                 <div id="stopChat"><svg width="24" height="24">
                         <use xlink:href="#stopResIcon" />
                     </svg><span data-i18n-key="stop"></span></div>
             </div>
+            
             <div class="bottom_wrapper clearfix">
+                <div class="bottom-option-container">
+                    <div class="draw-image-para" style="display:none;">
+                        <div class="draw-para-poptip draw-style-left" style="display:none;" id="drawStyleContainer"></div>
+                        <div class="draw-para-poptip draw-ratio-left" style="display:none;" id="drawRatioContainer"></div>
+                        <div class="draw-para-poptip draw-prompt-left" style="display:none;" id="drawPromptContainer"></div>
+
+                        <div class="draw-para-item" data-value="none" data-for="drawStyleContainer"><div id="draw-style-left" class="draw-para-label">风格</div></div>
+                        <div class="draw-para-item" data-value="1:1" data-for="drawRatioContainer"><div id="draw-ratio-left" class="draw-para-label">高宽比</div></div>
+                        <div class="draw-para-item" data-value="" data-for="drawPromptContainer"><div id="draw-prompt-left" class="draw-para-label">提示语</div></div>
+                    </div>
+                    <div class="upload-file-container" id="uploadFileContainer" style="display:none;"></div>
+                </div>
                 <div class="message_input_wrapper">
+                    <div id="imgUpload">
+                        <div id="imgUploadIcon">
+                            <div class="poptip"><span class="poptip-arrow poptip-arrow-bottom"><em>◆</em><i>◆</i></span><p>上传文件类型支持pdf、doc/docx、xls/xlsx、ppt/pptx、txt</p><p>及各种图片（每次会话最多上传10个文件，每个文件最大20M）</p></div>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="29" viewBox="0 0 28 29" fill="none">
+                                <path
+                                    d="M16.7838 23.0898H4.75C3.64543 23.0898 2.75 22.1944 2.75 21.0898L2.75 8.08984C2.75 6.98527 3.64543 6.08984 4.75 6.08984H9.05494C9.59847 6.08984 9.87001 6.08984 10.1258 6.14856C10.3525 6.20061 10.5697 6.28649 10.7686 6.403C10.9928 6.53442 11.185 6.71816 11.5693 7.08568L12.1703 7.66031C12.5424 8.01621 13.0375 8.21484 13.5525 8.21484L20.75 8.21484C21.8546 8.21484 22.75 9.11027 22.75 10.2148V12.1252"
+                                    stroke="#4F5866" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                                <path d="M22.75 15.8481V23.1106M22.75 15.8481L25.25 18.7354M22.75 15.8481L20.25 18.7354"
+                                    stroke="#4F5866" stroke-width="2" stroke-linecap="round" />
+                            </svg>
+                        </div>
+                        <form id="sendMessageForm" name="sendMessageForm" class="sendMessageForm">
+                            <input class="upload-input" id="file" name="file" type="file" multiple="" accept="" title="文件上传">
+                        </form>
+                    </div>
                     <textarea class="message_input_text" autocomplete="off" spellcheck="false" data-i18n-place="askTip"
-                        placeholder id="chatinput"></textarea>
+                        placeholder="" id="chatinput"></textarea>
                     <div id="voiceRec" style="display:none;">
                         <div id="voiceRecIcon">
                             <svg viewBox="0 0 48 48" id="voiceInputIcon">
@@ -2958,6 +730,7 @@
                     </svg>
                 </button>
             </div>
+            
         </div>
     </div>
     <div id="sysMask">
@@ -3046,9 +819,10 @@
                             </div>
                         </div>
                         <div class="modelSwitch">
-                            <div data-id="gptOption" class="activeSwitch">ChatGPT</div>
-                            <div data-id="geminiOption">Gemini</div>
-                            <div data-id="claudeOption">Claude</div>
+                            <div data-id="gptOption" class="activeSwitch modelSelect">ChatGPT</div>
+                            <div data-id="geminiOption" class="modelSelect">Gemini</div>
+                            <div data-id="claudeOption" class="modelSelect">Claude</div>
+                            <div data-id="bigModelOption" class="modelSelect">智谱</div>
                         </div>
                         <div class="apiSelsContainer">
                             <div id="apiSelect" tabindex="-1" style="display: none;"></div>
@@ -3120,6 +894,22 @@
                                 <div class="setDetail inputDetail">
                                     <input class="inputTextClass" type="text" placeholder="claude-x-xxx-xxxx"
                                         id="claudeModelInput" autocomplete="off" />
+                                </div>
+                            </div>
+                        </div>
+                        <div id="bigModelOption" style="display: none;">
+                            <div class="setContent setNotNormalFlow">
+                                <div class="setTitle"><span>智谱</span><span data-i18n-key="aiEndpoint"></span></div>
+                                <div class="setDetail inputDetail" style="position: relative;">
+                                    <input class="inputTextClass" placeholder="https://api.anthropic.com/"
+                                        autocomplete="off" id="zhipuApiHostInput" />
+                                </div>
+                            </div>
+                            <div class="setContent">
+                                <div class="setTitle" data-i18n-key="aiAuth"></div>
+                                <div class="setDetail inputDetail">
+                                    <input class="inputTextClass" placeholder=""
+                                        id="zhipuAuthInput" autocomplete="off" />
                                 </div>
                             </div>
                         </div>
@@ -3264,13 +1054,34 @@
             </div>
         </div>
     </div>
-    <link crossorigin="anonymous"
-        href="https://fastly.jsdelivr.net/npm/github-markdown-css@5.5.1/github-markdown-light.min.css" rel="stylesheet">
-    <link crossorigin="anonymous"
-        href="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/github.min.css"
-        rel="stylesheet">
+    <div class="goto-bottom" title="移动到底部" style="display:none;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 20 21" fill="none" class="normal">
+            <path d="M9.00049 17.4043C9.00049 17.9566 9.4482 18.4043 10.0005 18.4043C10.5528 18.4043 11.0005 17.9566 11.0005 17.4043L9.00049 17.4043ZM11.0005 4.4043C11.0005 3.85201 10.5528 3.4043 10.0005 3.4043C9.4482 3.4043 9.00049 3.85201 9.00049 4.4043L11.0005 4.4043ZM11.0005 17.4043L11.0005 4.4043L9.00049 4.4043L9.00049 17.4043L11.0005 17.4043Z" fill="#1A2029"></path>
+            <path d="M5.70759 11.6972C5.31707 11.3067 4.68391 11.3067 4.29338 11.6972C3.90286 12.0877 3.90286 12.7209 4.29338 13.1114L5.70759 11.6972ZM10.0005 17.4043L9.29338 18.1114C9.68391 18.5019 10.3171 18.5019 10.7076 18.1114L10.0005 17.4043ZM15.7076 13.1114C16.0981 12.7209 16.0981 12.0877 15.7076 11.6972C15.3171 11.3067 14.6839 11.3067 14.2934 11.6972L15.7076 13.1114ZM4.29338 13.1114L9.29338 18.1114L10.7076 16.6972L5.70759 11.6972L4.29338 13.1114ZM10.7076 18.1114L15.7076 13.1114L14.2934 11.6972L9.29338 16.6972L10.7076 18.1114Z" fill="#1A2029"></path>
+        </svg>
+        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 20 21" fill="none" class="hover">
+            <path d="M9.00049 17.2041C9.00049 17.7564 9.4482 18.2041 10.0005 18.2041C10.5528 18.2041 11.0005 17.7564 11.0005 17.2041L9.00049 17.2041ZM11.0005 4.2041C11.0005 3.65182 10.5528 3.2041 10.0005 3.2041C9.4482 3.2041 9.00049 3.65182 9.00049 4.2041L11.0005 4.2041ZM11.0005 17.2041L11.0005 4.2041L9.00049 4.2041L9.00049 17.2041L11.0005 17.2041Z" fill="#2454FF"></path>
+            <path d="M5.70759 11.497C5.31707 11.1065 4.68391 11.1065 4.29338 11.497C3.90286 11.8875 3.90286 12.5207 4.29338 12.9112L5.70759 11.497ZM10.0005 17.2041L9.29338 17.9112C9.68391 18.3017 10.3171 18.3017 10.7076 17.9112L10.0005 17.2041ZM15.7076 12.9112C16.0981 12.5207 16.0981 11.8875 15.7076 11.497C15.3171 11.1065 14.6839 11.1065 14.2934 11.497L15.7076 12.9112ZM4.29338 12.9112L9.29338 17.9112L10.7076 16.497L5.70759 11.497L4.29338 12.9112ZM10.7076 17.9112L15.7076 12.9112L14.2934 11.497L9.29338 16.497L10.7076 17.9112Z" fill="#2454FF"></path>
+        </svg>
+    </div>
+    <!--<link crossorigin="anonymous" href="https://fastly.jsdelivr.net/npm/github-markdown-css@5.5.1/github-markdown-light.min.css" rel="stylesheet">
+    <link crossorigin="anonymous" href="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/styles/github.min.css" rel="stylesheet">
     <link crossorigin="anonymous" href="https://fastly.jsdelivr.net/npm/notyf@3.10.0/notyf.min.css" rel="stylesheet">
-    <script crossorigin="anonymous" src="https://fastly.jsdelivr.net/npm/notyf@3.10.0/notyf.min.js"></script>
+    <script crossorigin="anonymous" src="https://fastly.jsdelivr.net/npm/notyf@3.10.0/notyf.min.js"></script>-->
+    <link crossorigin="anonymous" href="/assets/css/github-markdown-light.min.css" rel="stylesheet">
+    <link crossorigin="anonymous" href="/assets/css/github.min.css" rel="stylesheet">
+    <link crossorigin="anonymous" href="/assets/css/notyf.min.css" rel="stylesheet">
+    <script crossorigin="anonymous" src="/assets/js/jquery-3.4.1.js"></script>
+    <script crossorigin="anonymous" src="/assets/js/notyf.min.js"></script>
+    <script crossorigin="anonymous" src="/assets/js/aimodel.js?t=1.1"></script>
+    <script crossorigin="anonymous" src="/assets/js/crypto-js.min.js?t=1.0"></script>
+    <script crossorigin="anonymous" src="/assets/js/stream.js?t=1.47"></script>
+    <script crossorigin="anonymous" src="/assets/js/draw_para.js?t=0.03"></script>
+    <!--<script crossorigin="anonymous" src="/assets/prompts/content.js?t=0.4"></script>-->
+    <style>
+        .markdown-body img{width:80%;}
+        .markdown-body p:has(> img){text-align: center;;}
+    </style>
     <script>
         const notyf = new Notyf({
             position: { x: "center", y: "top" },
@@ -3298,11 +1109,113 @@
                     error => console.error(`Service worker register failed: ${error}`))
             }
         };
-        window.addEventListener("load", () => registerSW());
+
+        var hexIn = false;
+        var hexOut = false;
+        var base64EncodeChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+        var base64DecodeChars = new Array(
+            -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+            -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+            -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 62, -1, -1, -1, 63,
+            52, 53, 54, 55, 56, 57, 58, 59, 60, 61, -1, -1, -1, -1, -1, -1,
+            -1,  0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12, 13, 14,
+            15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, -1, -1, -1, -1, -1,
+            -1, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
+            41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, -1, -1, -1, -1, -1);
+        function base64encode(str) {
+            var out, i, len;
+            var c1, c2, c3;
+            var charCode;
+        
+            len = str.length;
+            i = 0;
+            out = "";
+            while(i < len) {
+            c1 = (hexIn ? str[i++] : str.charCodeAt(i++)) & 0xff;
+            if(i == len)
+            {
+                out += base64EncodeChars.charAt(c1 >> 2);
+                out += base64EncodeChars.charAt((c1 & 0x3) << 4);
+                out += "==";
+                break;
+            }
+            c2 = (hexIn ? str[i++] : str.charCodeAt(i++));
+            if(i == len)
+            {
+                out += base64EncodeChars.charAt(c1 >> 2);
+                out += base64EncodeChars.charAt(((c1 & 0x3)<< 4) | ((c2 & 0xF0) >> 4));
+                out += base64EncodeChars.charAt((c2 & 0xF) << 2);
+                out += "=";
+                break;
+            }
+            c3 = (hexIn ? str[i++] : str.charCodeAt(i++));
+            out += base64EncodeChars.charAt(c1 >> 2);
+            out += base64EncodeChars.charAt(((c1 & 0x3)<< 4) | ((c2 & 0xF0) >> 4));
+            out += base64EncodeChars.charAt(((c2 & 0xF) << 2) | ((c3 & 0xC0) >>6));
+            out += base64EncodeChars.charAt(c3 & 0x3F);
+            }
+            return out;
+        }
+        
+        function base64decode(str) {
+            var c1, c2, c3, c4;
+            var i, len, out;
+            var charCode;
+        
+            len = str.length;
+            i = 0;
+            out = hexOut ? [] : "";
+            while(i < len) {
+            /* c1 */
+            do {
+                c1 = base64DecodeChars[str.charCodeAt(i++) & 0xff];
+            } while(i < len && c1 == -1);
+            if(c1 == -1)
+                break;
+        
+            /* c2 */
+            do {
+                c2 = base64DecodeChars[str.charCodeAt(i++) & 0xff];
+            } while(i < len && c2 == -1);
+            if(c2 == -1)
+                break;
+        
+            charCode = (c1 << 2) | ((c2 & 0x30) >> 4);
+            hexOut ? out.push(charCode) : out += String.fromCharCode(charCode);
+        
+            /* c3 */
+            do {
+                c3 = str.charCodeAt(i++) & 0xff;
+                if(c3 == 61)
+                return out;
+                c3 = base64DecodeChars[c3];
+            } while(i < len && c3 == -1);
+            if(c3 == -1)
+                break;
+            charCode = ((c2 & 0XF) << 4) | ((c3 & 0x3C) >> 2);
+            hexOut ? out.push(charCode) : out += String.fromCharCode(charCode);
+        
+            /* c4 */
+            do {
+                c4 = str.charCodeAt(i++) & 0xff;
+                if(c4 == 61)
+                return out;
+                c4 = base64DecodeChars[c4];
+            } while(i < len && c4 == -1);
+            if(c4 == -1)
+                break;
+            charCode = ((c3 & 0x03) << 6) | c4;
+            hexOut ? out.push(charCode) : out += String.fromCharCode(charCode);
+            }
+            return out;
+        }
+
+        //window.addEventListener("load", () => registerSW());
         const isMobile = navigator.userAgent.match(/iPhone|iPad|iPod|Android|BlackBerry|webOS/);
         if (isMobile) {
             const script = document.createElement("script");
-            script.src = "https://fastly.jsdelivr.net/gh/timruffles/mobile-drag-drop@3.0.0-rc.0/release/index.min.js";
+            //script.src = "https://fastly.jsdelivr.net/gh/timruffles/mobile-drag-drop@3.0.0-rc.0/release/index.min.js";
+            script.src = "/assets/js/index.min.js";
             script.crossOrigin = "anonymous";
             script.defer = true;
             script.onload = () => {
@@ -3312,10 +1225,11 @@
             const link = document.createElement("link");
             link.crossOrigin = "anonymous";
             link.rel = "stylesheet";
-            link.href = "https://fastly.jsdelivr.net/gh/timruffles/mobile-drag-drop@3.0.0-rc.0/release/default.css";
+            //link.href = "https://fastly.jsdelivr.net/gh/timruffles/mobile-drag-drop@3.0.0-rc.0/release/default.css";
+            link.href = "/assets/css/default.css";
             document.body.appendChild(link);
         }
-        let envAPIEndpoint, envAPIKey, envAPIModel, envGeminiAPIEndpoint, envGeminiAPIKey, envGeminiAPIModel, envClaudeAPIEndpoint, envClaudeAPIKey, envClaudeAPIModel;
+        let envAPIEndpoint, envAPIKey, envAPIModel, envGeminiAPIEndpoint, envGeminiAPIKey, envGeminiAPIModel, envClaudeAPIEndpoint, envClaudeAPIKey, envClaudeAPIModel,envZhipuAPIModel,envZhipuAPIHost,envZhipuAPIAuth;
     </script>
     <script src="env.js"></script>
     <script>
@@ -3495,6 +1409,7 @@
                 "endDark": "End",
                 "aiEndpoint": " endpoint",
                 "aiKey": " API key",
+                "aiAuth": " API authorization",
                 "aiModel": "Custom model name",
                 "used": "Used ",
                 "available": "Avail ",
@@ -3654,6 +1569,7 @@
                 "endDark": "结束时间",
                 "aiEndpoint": "接口",
                 "aiKey": "API密钥",
+                "aiAuth": "API授权Token",
                 "aiModel": "自定义模型",
                 "used": "已用 ",
                 "available": "可用 ",
@@ -3783,6 +1699,47 @@
             }
             loadPrompt();
         }
+        
+        const getLocaleModel = () =>{
+            let localModelKey = localStorage.getItem("modelVersion");
+            let arrModel = [];
+            Object.keys(AIModels).forEach(function(key, idx) {
+                arrModel.push.apply(arrModel, AIModels[key]);
+            });
+            let isVailModel = arrModel.some(item => item.key === localModelKey)
+            return isVailModel ? localModelKey : arrModel[0].key;
+        }
+        const getLocaleModelName = (modelKey) =>{
+            let arrModel = [];
+            Object.keys(AIModels).forEach(function(key, idx) {
+                arrModel.push.apply(arrModel, AIModels[key]);
+            });
+            let model = arrModel.filter(item => item.key === modelKey)
+            return model[0].title;
+        }
+        const loadModel = () =>{
+            modelVersion = getLocaleModel()
+            let modelsHtml = '';
+            Object.keys(AIModels).forEach(function(key, idx) {
+                var json = AIModels[key];
+                json.sort(function(a,b){return b.sort - a. sort});
+                let modelApplyName = key === 'xhs' ? '小红书应用' :(key === 'dy' ? '抖音应用' : ( key === 'common' ? '通用应用' : '今日头条应用'));
+                /*switch(key){
+                    case 'xhs': modelApplyName = '小红书应用'; break;
+                    case 'dy':  modelApplyName = '抖音应用'; break;
+                    case 'com':  modelApplyName = '通用应用'; break;
+                    case 'toutiao':  modelApplyName = '今日头条应用'; break;
+                }*/
+                modelsHtml += `<div class="modelApply"><span class="modelApplyName">${modelApplyName}</span></div>`;
+                Object.keys(json).forEach(function(item, index){
+                    let clsName = modelVersion === json[index].key ? 'modelSingle activeModel' : (json[index].model === 'Zhipu' ? 'modelSingle' : 'modelSingle modelDisabled');
+                    modelsHtml += `<div class="${clsName}" data-value="${json[index].key}" data-ver=""><div class="modelAvatar"><img src="${json[index].img}" class="avatar"></div><div class="modelTitle"><h3>${json[index].title}</h3><p class="subtitle" title='${json[index].subtitle}'>${json[index].subtitle}</p></div></div>`;
+                })
+            });
+            let models = document.getElementById("modelDialog");
+            models.innerHTML = modelsHtml;
+        }
+        loadModel();
     </script>
     <script>
         const windowEle = document.getElementsByClassName("chat_window")[0];
@@ -3808,7 +1765,10 @@
         const searchChatEle = document.getElementById("searchChat");
         const voiceRecEle = document.getElementById("voiceRecIcon");
         const voiceRecSetEle = document.getElementById("voiceRecSetting");
+        const imgUploadEle = document.getElementById("imgUploadIcon");
+        const uploadInputEle = document.getElementById("file");
         const preEle = document.getElementById("preSetSystem");
+        
         let voicesData; // 语音数据
         let voiceType = 1; // 设置 0: 提问语音，1：回答语音
         let voiceRole = []; // 语音
@@ -3841,6 +1801,7 @@
         let autoSendTimer;
         let resetRecRes;
         let toggleRecEv;
+        let uploadFiles = [];
         const isAndroid = /\bAndroid\b/i.test(navigator.userAgent);
         const isApple = /(Mac|iPhone|iPod|iPad)/i.test(navigator.userAgent);
         const isSafari = /Safari/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent);
@@ -3852,9 +1813,7 @@
         };
         const dayMs = 8.64e7;
         refreshPage.onclick = () => {
-            if (confirmAction(translations[locale]["forceReTip"])) {
-                location.href = location.origin + location.pathname + "?" + new Date().getTime()
-            }
+            location.href = location.origin + location.pathname + "?" + new Date().getTime()
         };
         const noLoading = () => {
             return !loading && (!currentResEle || currentResEle.dataset.loading !== "true")
@@ -3878,7 +1837,21 @@
                 localStorage.setItem("pinNav", isShowNav)
             }
         }
+        const gotoBottom = () =>{
+            let ele = document.querySelectorAll('.messages')[0];
+            ele.scrollTop = ele.scrollHeight - ele.clientHeight;
+        }
+        
         document.body.addEventListener("mousedown", event => {
+            const clsName = event.target.className;
+            if(typeof(clsName) === 'object' && clsName.toString() === '[object SVGAnimatedString]'){ gotoBottom(); return; }
+            if(clsName === 'prompt-label' || clsName === 'tab-content' || clsName === 'draw-prompt-span' || clsName.indexOf('draw-prompt-left') >=0 ) {processDrawParameter(event);return;}
+            if(event.target.className.indexOf('draw-para-poptip') < 0 || event.target.parentElement.className.indexOf('draw-para-poptip') < 0){
+                Array.from(document.getElementsByClassName('draw-para-poptip')).forEach(ele=>{
+                    let isShow = ele.style.display;
+                    if(isShow !== 'none' ) ele.style.display = 'none';
+                })
+            }
             if (event.target.className === "toggler") {
                 toggleNavEv();
             } else if (event.target.className === "overlay") {
@@ -3888,6 +1861,7 @@
                     document.body.classList.remove("show-nav");
                 }
             }
+            processDrawParameter(event);
         });
         const endSetEvent = (ev) => {
             if (!document.getElementById("sysDialog").contains(ev.target)) {
@@ -3904,6 +1878,11 @@
         document.getElementById("sysSetting").onclick = () => {
             document.getElementById("sysMask").style.display = "flex";
             checkStorage();
+            let selectedModel = localStorage.getItem("ModelSelected");
+            /*$('.modelSelect').removeClass('activeSwitch')
+            $('.modelSelect[data-id="'+selectedModel+'"]').addClass('activeSwitch')
+            document.querySelector(".modelSwitch").click();*/
+            $('.modelSelect[data-id="'+selectedModel+'"]').click();
             document.getElementById("sysMask").onmousedown = endSetEvent;
         };
         const setAutoTimer = () => {
@@ -4516,6 +2495,7 @@
                 }
             }
             handleWSMsg(e) {
+                debugger;
                 if (typeof e.data === "string") {
                     let path = e.data.match(/Path:(.+)/)[1].trim();
                     let splitData = e.data.split("\n");
@@ -4905,12 +2885,21 @@
         }
         recServiceEle.dispatchEvent(new Event("change"));
         document.querySelector(".modelSwitch").onclick = document.querySelector(".sysSwitch").onclick = document.querySelector(".setSwitch").onclick = function (ev) {
+            if(ev.target.dataset.id === 'generalOption'){
+                let selectedModel = localStorage.getItem("ModelSelected");
+                $('.modelSelect').removeClass('activeSwitch')
+                $('.modelSelect[data-id="'+selectedModel+'"]').addClass('activeSwitch')
+            }
             let activeEle = this.getElementsByClassName("activeSwitch")[0];
+            
             if (ev.target !== activeEle) {
                 activeEle.classList.remove("activeSwitch");
                 ev.target.classList.add("activeSwitch");
                 document.getElementById(ev.target.dataset.id).style.display = "block";
                 document.getElementById(activeEle.dataset.id).style.display = "none";
+                if(activeEle.className.includes('modelSelect')){
+                    localStorage.setItem("ModelSelected", ev.target.dataset.id);
+                }
             }
         };
         if (!supportSpe) speechServiceEle.remove(3);
@@ -5409,11 +3398,13 @@
         initVoiceFunc();
         speechServiceEle.dispatchEvent(new Event("change"));
     </script>
-    <script crossorigin="anonymous"
-        src="https://fastly.jsdelivr.net/npm/markdown-it@14.1.0/dist/markdown-it.min.js"></script>
-    <script crossorigin="anonymous"
-        src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
-    <script crossorigin="anonymous" src="https://fastly.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js"></script>
+    <!--<script crossorigin="anonymous" src="https://fastly.jsdelivr.net/npm/markdown-it@14.1.0/dist/markdown-it.min.js"></script>
+    <script crossorigin="anonymous" src="https://fastly.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
+    <script crossorigin="anonymous" src="https://fastly.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js"></script>-->
+    <script crossorigin="anonymous" src="/assets/js/markdown-it.min.js"></script>
+    <script crossorigin="anonymous" src="/assets/js/highlight.min.js"></script>
+    <script crossorigin="anonymous" src="/assets/js/katex.min.js"></script>
+
     <script>
         const API_URL = "v1/chat/completions";
         const Gemini_API_URL = "v1/models/";
@@ -5427,19 +3418,23 @@
             "image": translations[locale]["imageText"]
         };
         let modelVersion; // 模型版本
-        let modelType; // 1:ChatGPT，2:Gemini，3:Claude
+        let modelType; // 1:ChatGPT，2:Gemini，3:Claude，4:Zhipu
         let apiHost; // api反代地址
         let geminiApiHost;
         let claudeApiHost;
+        let zhipuApiHost;
+        let zhipuApiAuth;
         let apiSelects = []; // api地址列表
         let geminiApiSelects = [];
         let claudeApiSelects = [];
+        let ZhipuApiSelects = [];
         let customAPIKey; // 自定义apiKey
         let geminiAPIKey;
         let claudeAPIKey;
         let customAPIModel; // 自定义apiModel
         let geminiAPIModel;
         let claudeAPIModel;
+        let zhipuAPIModel;
         let systemRole; // 自定义系统角色
         let roleNature; // 角色性格
         let roleTemp; // 回答质量
@@ -5461,6 +3456,7 @@
         let isCaseSearch; // 搜索是否区分大小写
         let controller;
         let controllerId;
+        let ZhipuAuth = '', DeviceId = '', ConversationId = '', ZhipuAuth_RefreshToken = '';
         const findOffsetTop = (ele, target) => { // target is positioned ancestor element
             if (ele.offsetParent !== target) return ele.offsetTop + findOffsetTop(ele.offsetParent, target);
             else return ele.offsetTop;
@@ -5518,6 +3514,7 @@
         const checkStorage = () => {
             let used = 0;
             for (let key in localStorage) {
+                console.log(`key = ${key}, value = ${localStorage[key]}`);
                 localStorage.hasOwnProperty(key) && (used += localStorage[key].length)
             }
             let remain = 5242880 - used;
@@ -5637,7 +3634,8 @@
                     loadingMermaid = true;
                     let script = document.createElement("script");
                     script.crossOrigin = "anonymous";
-                    script.src = "https://fastly.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js";
+                    //script.src = "https://fastly.jsdelivr.net/npm/mermaid@10.9.1/dist/mermaid.min.js";
+                    script.src = "/assets/js/mermaid.min.js";
                     script.onload = async () => {
                         loadingMermaid = false;
                         mermaid.mermaidAPI.initialize({
@@ -5685,6 +3683,20 @@
             else tokens[idx].attrs[aIndex][1] = "_blank";
             return self.renderToken(tokens, idx, options);
         };
+        md.renderer.rules.image = function (tokens, idx, options, env, self) {
+            const token = tokens[idx];
+            // 获取图片的alt text和src属性
+            const alt = token.content;
+            const src = token.attrGet('src');
+            const title = token.attrGet('title') || '';
+          
+            // 自定义你的图片标签，这里我们只是简单地修改了class和添加了data属性
+            let imgContainer = `<p class="response-image">`;
+            imgContainer += `<img src="${src}" alt="${alt}" title="${title}">`;
+            imgContainer += `</p>`
+            return imgContainer;
+            //return `<img src="${src}" alt="${alt}" title="${title}" class="custom-image-class" data-custom-attribute="custom-value">`;
+          };
         const codeUtils = {
             getCodeLang(str = "") {
                 const res = str.match(/ class="language-(.*?)"/);
@@ -5788,7 +3800,8 @@
             if (id) {
                 let parent = ev.target.parentElement;
                 let idxEle = parent.parentElement;
-                let idx = Array.prototype.indexOf.call(chatlog.children, this.parentElement);
+                //let idx = Array.prototype.indexOf.call(chatlog.children, this.parentElement);
+                let idx = Array.prototype.indexOf.call(chatlog.children, this.parentElement.parentElement);
                 if (id === "voiceBtn" || id === "speechMd" || id === "pauseMd" || id === "resumeMd") {
                     let classList = parent.dataset.id === "voiceBtn" ? parent.classList : ev.target.classList;
                     if (classList.contains("readyVoice")) {
@@ -5889,16 +3902,94 @@
         const formatAvatarEle = (ele, model) => {
             ele.className = "chatAvatar";
             if (ele.parentElement.className === "request") {
-                ele.innerHTML = `<img src="${userAvatar}" />`;
+                //ele.innerHTML = `<img src="${userAvatar}" />`;
+                let avatar = localStorage.getItem("userAvatar");
+                ele.innerHTML = `<div class='avatar-img'><img src='${avatar}' /></div><div class='chat-user'> 我 </div>`;
+                
+                let mdOption = document.createElement("div");
+                mdOption.className = "mdOption";
+                ele.appendChild(mdOption);
+            
+                let optionWidth = existVoice >= 2 ? 140 : 105;
+                //mdOption.innerHTML += `<div class="optionItems" style="width:${optionWidth}px;left:-${optionWidth - 10}px">`
+                mdOption.innerHTML += `<div class="optionItems" style="width:${optionWidth}px;">`
+                    + (ele.className === "request" ? `<div data-id="editMd" class="optionItem" title="${translations[locale]["edit"]}">
+                    <svg width="18" height="18"><use xlink:href="#chatEditIcon" /></svg>
+                    </div>` : `<div data-id="refreshMd" class="refreshReq optionItem" title="${translations[locale]["refresh"]}">
+                    <svg width="18" height="18" ><use xlink:href="#refreshIcon" /></svg>
+                    <svg width="18" height="18" ><use xlink:href="#halfRefIcon" /></svg>
+                    </div>`) +
+                    `<div data-id="copyMd" class="optionItem" title="${translations[locale]["copy"]}">
+                    <svg width="20" height="20"><use xlink:href="#copyIcon" /></svg>
+                </div>
+                <div data-id="delMd" class="optionItem" title="${translations[locale]["del"]}">
+                    <svg width="20" height="20"><use xlink:href="#delIcon" /></svg>
+                </div>` + (existVoice >= 2 ? `<div data-id="downAudioMd" class="optionItem" title="${translations[locale]["downAudio"]}">
+                    <svg width="20" height="20"><use xlink:href="#downAudioIcon" /></svg>
+                </div>` : "") + `</div>`;
+                if (existVoice) {
+                    mdOption.innerHTML += `<div class="voiceCls readyVoice" data-id="voiceBtn">
+                    <svg width="20" height="20" role="img" data-id="speechMd"><title>${translations[locale]["speech"]}</title><use xlink:href="#readyVoiceIcon" /></svg>
+                    <svg width="20" height="20" role="img" data-id="pauseMd"><title>${translations[locale]["pause"]}</title><use xlink:href="#pauseVoiceIcon" /></svg>
+                    <svg width="20" height="20" role="img" data-id="resumeMd"><title>${translations[locale]["resume"]}</title><use xlink:href="#resumeVoiceIcon" /></svg>
+                    </div>`
+                }
+                $('.optionItems').css({width:(optionWidth+'px'),left:($('.requestBody').width()-optionWidth-$('nav').width())+'px',top:'-4px'});
+                mdOption.onclick = mdOptionEvent;
             } else {
-                if (model.startsWith("gpt")) {
+                /*if (model.startsWith("gpt")) {
                     ele.classList.add("gptAvatar")
                     ele.innerHTML = `<svg width="24" height="24"><use xlink:href="#aiIcon"></use></svg>`;
                 } else if (model.startsWith("gemini")) {
                     ele.innerHTML = `<svg width="30" height="30"><use xlink:href="#geminiIcon"></use></svg>`;
                 } else {
                     ele.innerHTML = `<svg width="30" height="30"><use xlink:href="#claudeIcon"></use></svg>`;
+                }*/
+                let avatar_html = '';
+                let modelData = document.querySelectorAll(`div.modelSingle[data-value="${model}"]`)[0];
+                let imgSrc = modelData.children[0].children[0].src;
+                let title = modelData.children[1].children[0].innerText;
+                if (model.startsWith("gpt")) {
+                    ele.classList.add("gptAvatar")
+                    avatar_html = `<svg width="24" height="24"><use xlink:href="#aiIcon"></use></svg>`;
+                } else if (model.startsWith("gemini")) {
+                    avatar_html = `<svg width="30" height="30"><use xlink:href="#geminiIcon"></use></svg>`;
+                } else if(model.startsWith("claude")) {
+                    avatar_html = `<svg width="30" height="30"><use xlink:href="#claudeIcon"></use></svg>`;
                 }
+                else avatar_html = `<img src="${imgSrc}" />`;
+                
+                ele.innerHTML = `<div class='avatar-img'>${avatar_html}</div><div class='chat-user'>${title}</div>`;
+                
+                let mdOption = document.createElement("div");
+                mdOption.className = "mdOption";
+                ele.appendChild(mdOption);
+                let optionWidth = existVoice >= 2 ? 140 : 105;
+                //mdOption.innerHTML += `<div class="optionItems" style="width:${optionWidth}px;left:-${optionWidth - 10}px">`
+                mdOption.innerHTML += `<div class="optionItems" style="width:${optionWidth}px;">`
+                    + (ele.className === "request" ? `<div data-id="editMd" class="optionItem" title="${translations[locale]["edit"]}">
+                    <svg width="18" height="18"><use xlink:href="#chatEditIcon" /></svg>
+                    </div>` : `<div data-id="refreshMd" class="refreshReq optionItem" title="${translations[locale]["refresh"]}">
+                    <svg width="18" height="18" ><use xlink:href="#refreshIcon" /></svg>
+                    <svg width="18" height="18" ><use xlink:href="#halfRefIcon" /></svg>
+                    </div>`) +
+                    `<div data-id="copyMd" class="optionItem" title="${translations[locale]["copy"]}">
+                    <svg width="20" height="20"><use xlink:href="#copyIcon" /></svg>
+                </div>
+                <div data-id="delMd" class="optionItem" title="${translations[locale]["del"]}">
+                    <svg width="20" height="20"><use xlink:href="#delIcon" /></svg>
+                </div>` + (existVoice >= 2 ? `<div data-id="downAudioMd" class="optionItem" title="${translations[locale]["downAudio"]}">
+                    <svg width="20" height="20"><use xlink:href="#downAudioIcon" /></svg>
+                </div>` : "") + `</div>`;
+                if (existVoice) {
+                    mdOption.innerHTML += `<div class="voiceCls readyVoice" data-id="voiceBtn">
+                    <svg width="20" height="20" role="img" data-id="speechMd"><title>${translations[locale]["speech"]}</title><use xlink:href="#readyVoiceIcon" /></svg>
+                    <svg width="20" height="20" role="img" data-id="pauseMd"><title>${translations[locale]["pause"]}</title><use xlink:href="#pauseVoiceIcon" /></svg>
+                    <svg width="20" height="20" role="img" data-id="resumeMd"><title>${translations[locale]["resume"]}</title><use xlink:href="#resumeVoiceIcon" /></svg>
+                    </div>`
+                }
+                $('.optionItems').css({width:(optionWidth+'px'),left:($('.requestBody').width()-optionWidth-$('nav').width())+'px',top:'-4px'});
+                mdOption.onclick = mdOptionEvent;
             }
         }
         const formatMdEle = (ele, model) => {
@@ -5908,11 +3999,12 @@
             let realMd = document.createElement("div");
             realMd.className = ele.className === "request" ? "requestBody" : "markdown-body";
             ele.appendChild(realMd);
-            let mdOption = document.createElement("div");
+            /*let mdOption = document.createElement("div");
             mdOption.className = "mdOption";
             ele.appendChild(mdOption);
             let optionWidth = existVoice >= 2 ? 140 : 105;
-            mdOption.innerHTML += `<div class="optionItems" style="width:${optionWidth}px;left:-${optionWidth - 10}px">`
+            //mdOption.innerHTML += `<div class="optionItems" style="width:${optionWidth}px;left:-${optionWidth - 10}px">`
+            mdOption.innerHTML += `<div class="optionItems" style="width:${optionWidth}px;left:${$('.requestBody').width()}px;top:-4px;">`
                 + (ele.className === "request" ? `<div data-id="editMd" class="optionItem" title="${translations[locale]["edit"]}">
                 <svg width="18" height="18"><use xlink:href="#chatEditIcon" /></svg>
                 </div>` : `<div data-id="refreshMd" class="refreshReq optionItem" title="${translations[locale]["refresh"]}">
@@ -5934,7 +4026,8 @@
                 <svg width="20" height="20" role="img" data-id="resumeMd"><title>${translations[locale]["resume"]}</title><use xlink:href="#resumeVoiceIcon" /></svg>
                 </div>`
             }
-            mdOption.onclick = mdOptionEvent;
+            $('.optionItems').css({width:(optionWidth+'px'),left:($('.requestBody').width()-optionWidth-$('nav').width())+'px',top:'-4px'});
+            mdOption.onclick = mdOptionEvent;*/
         }
         let allListEle = chatListEle.parentElement;
         let folderData = [];
@@ -5946,6 +4039,8 @@
         let operateChatIdx, operateFolderIdx;
         let dragLi, dragType, dragIdx;
         let mobileDragOut;
+        
+        
         const mobileDragStartEV = function (ev) {
             if (mobileDragOut !== void 0) {
                 clearTimeout(mobileDragOut);
@@ -6240,7 +4335,7 @@
             chatEle.ondragstart = chatDragStartEv;
             chatEle.innerHTML = `<svg width="24" height="24"><use xlink:href="#chatIcon" /></svg>
                 <div class="chatInfo">
-                    <div class="chatName"></div>
+                    <div class="chatName" data-i18n-key="newChat">${translations[locale]["newChat"]}</div>
                     <div class="chatPre"></div>
                 </div>
                 <div class="chatOption"><svg data-type="chatEdit" width="24" height="24" role="img"><title>${translations[locale]["edit"]}</title><use xlink:href="#chatEditIcon" /></svg>
@@ -6257,6 +4352,7 @@
             chatsData.push(chat);
             chatIdxs.push(chatsData.length - 1);
             updateChats();
+            ConversationId = "";
         };
         const delChat = (idx, ele, folderIdx, inFolderIdx) => {
             if (confirmAction(translations[locale]["delChatTip"])) {
@@ -6423,6 +4519,7 @@
         }
         const activeChat = (ele) => {
             data = chatsData[activeChatIdx]["data"];
+            ConversationId = chatsData[activeChatIdx].hasOwnProperty('ConversationId') ? chatsData[activeChatIdx]['ConversationId'] : '';
             allListEle.querySelectorAll(".activeChatLi").forEach(ele => {
                 ele.classList.remove("activeChatLi");
             })
@@ -6432,6 +4529,7 @@
             if (!ele) ele = getChatEle(activeChatIdx);
             ele.classList.add("activeChatLi");
             activeChatEle = ele;
+
             if (chatIdxs.indexOf(activeChatIdx) === -1) {
                 if (!ele.parentElement.parentElement.classList.contains("expandFolder")) {
                     ele.parentElement.parentElement.classList.add("activeFolder");
@@ -6474,15 +4572,65 @@
                     } else messagesEle.scrollTop = currChatEle.offsetTop;
                 } else messagesEle.scrollTop = 0;
             }
+            messagesEle.scrollTo(0, messagesEle.scrollHeight)
         };
-        newChatEle.onclick = () => {
+        const IsExpireZhipuAuth = (token) =>{
+            let accessToken = token.split('.');
+            let decodeToken = base64decode(accessToken[1]);//.replace('{"alg":"HS256","typ":"JWT"}','');
+            let tokenJson = JSON.parse(decodeToken);
+            let exp = tokenJson.exp * 1000;
+            if(exp < (new Date()).getTime()) return true;
+            else return false;
+        }
+        const refreshZhipuAuthToken = async () =>{
+            const data = {refresh_token: ret.refresh_token, deviceId: DeviceId, requestId: getXRequestId()}
+            res = await refreshZhipuAuth(data, function(refresh_res){
+                if(refresh_res.data){
+                    //ret.access_token = refresh_res.data.result.access_token;
+                    ZhipuAuth = refresh_res.data.result.access_token;
+                    var token = `${refresh_res.data.result.access_token}｜${refresh_res.data.result.refresh_token}`;
+                    $.post("https://cms.foryet.com/api/refreshZhipuToken", { token: token }, function(refreshRes){
+                        console.log("更新授权成功！refreshRes = " , refreshRes);
+                        return refreshRes;
+                    });
+                }
+            });
+        }
+        const getZhipuAuth = async () => {
+            const url = 'https://cms.foryet.com/api/zhipuauth'
+            let res = await fetch(url);
+            let ret = await res.json();
+            if(ret){
+                ZhipuAuth = ret.access_token;
+                ZhipuAuth_RefreshToken = ret.refresh_token;
+                DeviceId = ret.deviceId;
+                if(IsExpireZhipuAuth(ret.access_token)) {
+                    const data = {refresh_token: ret.refresh_token, deviceId: DeviceId, requestId: getXRequestId()}
+                    res = await refreshZhipuAuth(data, function(refresh_res){
+                        if(refresh_res.data){
+                            ZhipuAuth = refresh_res.data.result.access_token;
+                            ZhipuAuth_RefreshToken = refresh_res.data.result.refresh_token
+                            var token = `${refresh_res.data.result.access_token}｜${refresh_res.data.result.refresh_token}`;
+                            $.post("https://cms.foryet.com/api/refreshZhipuToken", { token: token }, function(refreshRes){
+                                console.log("更新授权成功！refreshRes = " , refreshRes);
+                                return refreshRes;
+                            });
+                        }
+                    });
+                }
+                else return ret;
+            }
+            else return '';
+        }
+        newChatEle.onclick = async () => {
             endAll();
             addNewChat();
             activeChatIdx = chatsData.length - 1;
             chatEleAdd(activeChatIdx);
             activeChat(chatListEle.lastElementChild);
+            ConversationId = ''
         };
-        const initChats = () => {
+        const initChats = async () => {
             let localChats = localStorage.getItem("chats");
             let localFolders = localStorage.getItem("folders");
             let localChatIdxs = localStorage.getItem("chatIdxs")
@@ -6691,7 +4839,7 @@
                 notyf.success(translations[locale]["clearChatSuccTip"]);
             }
         };
-        let localSetKeys = ['modelVersion', 'APISelect', 'GeminiAPISelect', 'ClaudeAPISelect', 'APIHost', 'GeminiAPIHost', 'ClaudeAPIHost', 'APIKey', 'GeminiAPIKey', 'ClaudeAPIKey', 'APIModel', 'GeminiAPIModel', 'ClaudeAPIModel', 'hotKeys', 'userAvatar', 'system', 'temp', 'top_p', 'convWidth0', 'convWidth1', 'textSpeed', 'contLen', 'enableLongReply', 'existVoice', 'voiceTestText', 'azureRegion', 'azureKey', 'enableContVoice', 'enableAutoVoice', 'existRec', 'azureRecRegion', 'azureRecKey', 'voiceRecLang', 'autoVoiceSendWord', 'autoVoiceStopWord', 'autoVoiceSendOut', 'keepListenMic', 'fullWindow', 'themeMode', 'autoThemeMode', 'customDarkTime', 'UILang', 'pinNav', 'voice0', 'voicePitch0', 'voiceVolume0', 'voiceRate0', 'azureRole0', 'azureStyle0', 'voice1', 'voicePitch1', 'voiceVolume1', 'voiceRate1', 'azureRole1', 'azureStyle1', 'searchFlag'];
+        let localSetKeys = ['modelVersion', 'APISelect', 'GeminiAPISelect', 'ClaudeAPISelect', 'APIHost', 'GeminiAPIHost', 'ClaudeAPIHost', 'APIKey', 'GeminiAPIKey', 'ClaudeAPIKey', 'APIModel', 'GeminiAPIModel', 'ClaudeAPIModel', 'ZhipuAPIModel','hotKeys', 'userAvatar', 'system', 'temp', 'top_p', 'convWidth0', 'convWidth1', 'textSpeed', 'contLen', 'enableLongReply', 'existVoice', 'voiceTestText', 'azureRegion', 'azureKey', 'enableContVoice', 'enableAutoVoice', 'existRec', 'azureRecRegion', 'azureRecKey', 'voiceRecLang', 'autoVoiceSendWord', 'autoVoiceStopWord', 'autoVoiceSendOut', 'keepListenMic', 'fullWindow', 'themeMode', 'autoThemeMode', 'customDarkTime', 'UILang', 'pinNav', 'voice0', 'voicePitch0', 'voiceVolume0', 'voiceRate0', 'azureRole0', 'azureStyle0', 'voice1', 'voicePitch1', 'voiceVolume1', 'voiceRate1', 'azureRole1', 'azureStyle1', 'searchFlag'];
         document.getElementById("exportSet").onclick = () => {
             let data = {}
             for (let i = 0; i < localSetKeys.length; i++) {
@@ -6861,33 +5009,52 @@
         initHotKey();
         document.addEventListener("keydown", ctrlHotKeyEv);
         document.addEventListener("keydown", ctrlAltHotKeyEv);
-        const initSetting = () => {
+        
+
+        const initSetting = async () => {
+            //loadModel();
             const modelsEle = Array.from(modelSetEle.children);
             let localModelName = localStorage.getItem("modelVersion");
             let isVailModel = modelsEle.some(item => item.dataset.value === localModelName)
-            modelVersion = isVailModel ? localModelName : "gpt-3.5-turbo";
-            const applyModelVersion = () => {
+            modelVersion = isVailModel ? localModelName : "65fc148a7ad0f796ff91dca5";//"gpt-3.5-turbo";
+            const applyModelVersion =  () => {
                 let activedEle = modelSetEle.querySelector(".activeModel");
                 if (activedEle) activedEle.classList.remove("activeModel");
+                modelVersion = getLocaleModel();
                 activedEle = modelSetEle.querySelector(`[data-value="${modelVersion}"]`);
                 activedEle.classList.add("activeModel");
-                modelVer.textContent = activedEle.dataset.ver;
+                modelVer.textContent = getLocaleModelName(modelVersion);//activedEle.dataset.ver;
                 if (modelVersion.startsWith("gpt")) {
                     modelType = 1;
                     modelName.textContent = "ChatGPT";
                 } else if (modelVersion.startsWith("gemini")) {
                     modelType = 2;
                     modelName.textContent = "Gemini";
-                } else {
+                } else if (modelVersion.startsWith("claude")){
                     modelType = 3;
                     modelName.textContent = "Claude";
                 }
+                else{
+                    modelType = 4;
+                    modelName.textContent = "";//"智谱 -- ";
+                }
+                let drawParaEle = document.querySelectorAll('.draw-image-para')[0];
+                if(modelVersion === '65a232c082ff90a2ad2f15e2') drawParaEle.style.display = 'flex';
+                else drawParaEle.style.display = 'none';
+                loadDrawStyleData();
+                loadDrawRatioData();
+                loadDrawPromtData();
             };
+            let ret = await getZhipuAuth();
+            /*ZhipuAuth = ret.access_token;
+            DeviceId = ret.deviceId;*/
+
             applyModelVersion();
             modelSetEle.onclick = (ev) => {
                 if (ev.target.classList.contains("modelSingle")) {
                     modelVersion = ev.target.dataset.value;
                     localStorage.setItem("modelVersion", modelVersion);
+                    if(modelVersion !== currentModelName) ConversationId = '';
                     applyModelVersion();
                     modelSetEle.style.display = "none";
                     selectorEle.classList.remove("showModels");
@@ -6896,6 +5063,7 @@
             const apiHostEle = document.getElementById("apiHostInput");
             const geminiHostEle = document.getElementById("geminiApiHostInput");
             const claudeHostEle = document.getElementById("claudeApiHostInput");
+            const zhipuHostEle = document.getElementById("zhipuApiHostInput");
             const apiSelectEle = document.getElementById("apiSelect");
             let localApiSelect = localStorage.getItem("APISelect");
             if (localApiSelect) {
@@ -6926,6 +5094,16 @@
                 }
             } else {
                 claudeApiSelects.length = 0;
+            }
+            let localZhipuApiSelect = localStorage.getItem("ZhipuAPISelect");
+            if (localZhipuApiSelect) {
+                try {
+                    ZhipuApiSelects = JSON.parse(localZhipuApiSelect);
+                } catch (e) {
+                    ZhipuApiSelects.length = 0;
+                }
+            } else {
+                ZhipuApiSelects.length = 0;
             }
             let selApiSelects = apiSelects;
             let selApiKey = "APISelect";
@@ -6958,6 +5136,11 @@
                 initApiOption(claudeApiHost);
                 localStorage.setItem("ClaudeAPISelect", JSON.stringify(claudeApiSelects));
             }
+            const appendZhipuApiOption = () => {
+                ZhipuApiSelects.push(zhipuApiHost);
+                initApiOption(zhipuApiHost);
+                localStorage.setItem("ZhipuAPISelect", JSON.stringify(ZhipuApiSelects));
+            }
             const selApiOption = function (ev) {
                 ev.preventDefault();
                 ev.stopPropagation();
@@ -6985,7 +5168,7 @@
                     initApiOption(selApiSelects[i]);
                 }
             }
-            apiHostEle.onfocus = geminiHostEle.onfocus = claudeHostEle.onfocus = () => {
+            apiHostEle.onfocus = geminiHostEle.onfocus = claudeHostEle.onfocus = zhipuHostEle.onfocus = () => {
                 let type = document.querySelector(".modelSwitch").querySelector(".activeSwitch").dataset.id;
                 if (type === "gptOption") {
                     selApiSelects = apiSelects;
@@ -6995,6 +5178,10 @@
                     selApiSelects = geminiApiSelects;
                     selApiKey = "GeminiAPISelect";
                     selApiEle = geminiHostEle;
+                } else if(type === "bigModelOption"){
+                    selApiSelects = ZhipuApiSelects;
+                    selApiKey = "ZhipuAPISelect";
+                    selApiEle = zhipuHostEle;
                 } else {
                     selApiSelects = claudeApiSelects;
                     selApiKey = "ClaudeAPISelect";
@@ -7081,6 +5268,33 @@
             }
             claudeModelEle.dispatchEvent(new Event("change"));
 
+            /*const zhipuModelEle = document.getElementById("zhipuModelInput");
+            let localZhipuModel = localStorage.getItem("ZhipuAPIModel");
+            zhipuAPIModel = zhipuModelEle.value = envZhipuAPIModel || localZhipuModel || zhipuModelEle.getAttribute("value") || "";
+            zhipuModelEle.onchange = () => {
+                zhipuAPIModel = zhipuModelEle.value;
+                localStorage.setItem("ZhipuAPIModel", zhipuAPIModel);
+            }
+            zhipuModelEle.dispatchEvent(new Event("change"));*/
+            
+            const zhipuApiHostEle = document.getElementById("zhipuApiHostInput");
+            let localZhipuApiHost = localStorage.getItem("ZhipuAPIHost");
+            zhipuApiHost = zhipuApiHostEle.value = envZhipuAPIHost || localZhipuApiHost || zhipuApiHostEle.getAttribute("value") || "";
+            zhipuApiHostEle.onchange = () => {
+                zhipuApiHost = zhipuApiHostEle.value;
+                if (zhipuApiHost && ZhipuApiSelects.indexOf(zhipuApiHost) === -1) appendZhipuApiOption();
+                localStorage.setItem("ZhipuAPIHost", zhipuApiHost);
+            }
+            zhipuApiHostEle.dispatchEvent(new Event("change"));
+            const zhipuApiAuthEle = document.getElementById("zhipuAuthInput");
+            let localZhipuApiAuth = localStorage.getItem("ZhipuAPIAuth");
+            zhipuApiHost = zhipuApiAuthEle.value = envZhipuAPIAuth || localZhipuApiAuth || zhipuApiAuthEle.getAttribute("value") || "";
+            zhipuApiAuthEle.onchange = () => {
+                zhipuApiAuth = zhipuApiAuthEle.value;
+                localStorage.setItem("ZhipuAPIAuth", zhipuApiAuth);
+            }
+            zhipuApiAuthEle.dispatchEvent(new Event("change"));
+            
             const updateAvatar = () => {
                 setAvatarPre.src = userAvatar;
                 chatlog.querySelectorAll(".request>.chatAvatar").forEach(ele => {
@@ -7088,7 +5302,8 @@
                 })
             }
             let localAvatar = localStorage.getItem("userAvatar");
-            userAvatar = setAvatarPre.src = setAvatar.value = localAvatar || setAvatar.getAttribute("value") || "https://cdn.jsdelivr.net/gh/xqdoo00o/chatgpt-web@main/avatar.jpg";
+            //userAvatar = setAvatarPre.src = setAvatar.value = localAvatar || setAvatar.getAttribute("value") || "https://cdn.jsdelivr.net/gh/xqdoo00o/chatgpt-web@main/avatar.jpg";
+            userAvatar = setAvatarPre.src = setAvatar.value = localAvatar || setAvatar.getAttribute("value") || "/assets/img/user-avatar.png";
             setAvatar.onchange = () => {
                 userAvatar = setAvatar.value;
                 localStorage.setItem("userAvatar", userAvatar);
@@ -7163,7 +5378,8 @@
             const setConvValue = () => {
                 let type = isFull ? 1 : 0;
                 let localConv = localStorage.getItem("convWidth" + type);
-                convWEle.value = parseInt(localConv || (type ? "60" : "100"));
+                //convWEle.value = parseInt(localConv || (type ? "60" : "100"));
+                convWEle.value = parseInt(localConv || (type ? "80" : "100"));
                 convWEle.dispatchEvent(new Event("input"));
             }
             const fullFunc = () => {
@@ -7189,6 +5405,7 @@
             } else {
                 setConvValue();
             }
+            gotoBottom();
             const speedEle = document.getElementById("textSpeed");
             let localSpeed = localStorage.getItem("textSpeed");
             speedEle.value = localSpeed || speedEle.getAttribute("value");
@@ -7383,8 +5600,10 @@
             }
         }
         selectorEle.onmousedown = () => {
-            modelSetEle.style.display = modelSetEle.style.display === "block" ? "none" : "block";
-            if (modelSetEle.style.display === "block") {
+            //modelSetEle.style.display = modelSetEle.style.display === "block" ? "none" : "block";
+            //if (modelSetEle.style.display === "block") {
+            modelSetEle.style.display = modelSetEle.style.display === "block" ? "none" : "flex";
+            if (modelSetEle.style.display === "flex") {
                 document.addEventListener("mousedown", modelCloseEvent, true);
                 selectorEle.classList.add("showModels");
             } else {
@@ -7431,7 +5650,8 @@
         const resetSpeakIcon = () => {
             if (currentVoiceIdx !== void 0) {
                 chatlog.children[systemRole ? currentVoiceIdx - 1 : currentVoiceIdx].classList.remove("showVoiceCls");
-                chatlog.children[systemRole ? currentVoiceIdx - 1 : currentVoiceIdx].lastChild.lastChild.className = "voiceCls readyVoice";
+                //chatlog.children[systemRole ? currentVoiceIdx - 1 : currentVoiceIdx].lastChild.lastChild.className = "voiceCls readyVoice";
+                chatlog.children[systemRole ? currentVoiceIdx - 1 : currentVoiceIdx].firstChild.lastChild.lastChild.className = "voiceCls readyVoice";
             }
         }
         const endSpeak = () => {
@@ -7789,7 +6009,8 @@
         }
         const pauseEv = () => {
             if (voiceIns.src) {
-                let ele = chatlog.children[systemRole ? currentVoiceIdx - 1 : currentVoiceIdx].lastChild.lastChild;
+                //let ele = chatlog.children[systemRole ? currentVoiceIdx - 1 : currentVoiceIdx].lastChild.lastChild;
+                let ele = chatlog.children[systemRole ? currentVoiceIdx - 1 : currentVoiceIdx].lastChild.previousElementSibling.lastChild.lastChild;
                 ele.classList.remove("readyVoice");
                 ele.classList.remove("pauseVoice");
                 ele.classList.add("resumeVoice");
@@ -7797,7 +6018,8 @@
         }
         const resumeEv = () => {
             if (voiceIns.src) {
-                let ele = chatlog.children[systemRole ? currentVoiceIdx - 1 : currentVoiceIdx].lastChild.lastChild;
+                //let ele = chatlog.children[systemRole ? currentVoiceIdx - 1 : currentVoiceIdx].lastChild.lastChild;
+                let ele = chatlog.children[systemRole ? currentVoiceIdx - 1 : currentVoiceIdx].lastChild.previousElementSibling.lastChild.lastChild;
                 ele.classList.remove("readyVoice");
                 ele.classList.remove("resumeVoice");
                 ele.classList.add("pauseVoice");
@@ -7985,6 +6207,108 @@
                 voiceIns.removeAttribute("src");
             }
         }
+        imgUploadEle.onclick = (event) => {
+            uploadInputEle.click();
+        }
+        function isImage(file) {
+            return /^image\//i.test(file.type);
+        }
+        function getFileImage(file){
+            const fileExt = file.name.split('.').pop().toLowerCase();
+            return `/assets/img/${fileExt}.png`
+        }
+        function getFileType(file){
+            const fileExt = file.name.split('.').pop().toUpperCase();
+            return fileExt;
+        }
+        function getFileSize(file){
+            const size = file.size / 1024;;
+            return size.toFixed(2);
+        }
+        function getFileName(file){
+            const fileName = file.name.substring(0,file.name.lastIndexOf('.'));
+            return fileName;
+        }
+        const localImageSrc = async (para, callback) => {
+            if(isImage(para.file)){
+                const reader = new FileReader();
+                reader.onload = async function(e){
+                    const imgSrc = e.target.result;
+                    callback({imgUrl:imgSrc, order: para.order})
+                }
+                reader.readAsDataURL(para.file);
+            }
+            else {
+                const imgSrc = `/assets/img/${getFileImage(para.file)}`;
+                callback({imgUrl:imgSrc, order: para.order});
+            }
+        }
+        delUploadFile = () => {
+            let parent = this.parentElement;
+            let order = parseInt(this.getAttribute('data-sort'));
+            let fileId = this.parentElement.getAttribute('data-fileid');
+            parent.remove();
+            uploadFiles = uploadFiles.filter(item => item.file_id !== fileId);
+            uploadFiles.forEach((item, index) => {
+                if(index >= order)  uploadFiles[index].order =  uploadFiles[index].order - 1;
+            })
+        }
+        uploadInputEle.addEventListener('change', async function(e) {
+            var files = e.target.files;
+            for (var i = 0; i < files.length; i++) {
+                let para = {file: files[i], order: i}
+                localImageSrc(para, function(data){
+                    let imgItem = document.createElement('div');
+                    imgItem.className = 'upload-file-item';
+                    imgItem.setAttribute('data-sort', data.order);
+                    const html = `                    <div class="cancel-image" data-sort="${data.order}" style="display:none;">x</div>
+                        <div class="upload-file-img">
+                            <img src="${data.imgUrl}" class="avatar">
+                        </div>
+                        <div class="update-file-desc" data-sort="${data.order}">
+                            <div class="h5">${getFileName(files[data.order])}</div>
+                            <p class="subtitle-desc" style="display:none;" data-sort="${data.order}"><span>${getFileType(files[data.order])}</span><span>${getFileSize(files[data.order])}k</span></p>
+                            <div class="file-uploading-status" data-sort="${data.order}"><p class='uploading-icon'></p><p class='uploading-desc' data-sort="${data.order}">上传中...</p></p></div>
+                        </div>`;
+                    imgItem.innerHTML = html;
+                    document.getElementById('uploadFileContainer').appendChild(imgItem);
+                    if(data.order ===0 ) document.getElementById('uploadFileContainer').style.display = 'flex';
+                    uploadFile(para, function(res){
+                        if(res.status === 0){
+                            const image = { file_name: res.result.file_name, file_id: res.result.file_id, image_url: res.result.file_url,file_size: para.file.size, order: res.result.order }
+                            uploadFiles.push(image);
+                            var element = document.querySelector(`.file-uploading-status[data-sort="${res.result.order}"]`);
+                            if(element) element.style.display = 'none';
+                            element = document.querySelector(`.subtitle-desc[data-sort="${res.result.order}"]`);
+                            if(element) element.style.display = 'flex';
+                            let delImgEle = document.querySelector(`.cancel-image[data-sort="${res.result.order}"]`);
+                            if(delImgEle) {
+                                delImgEle.style.display = 'block';
+                                delImgEle.onclick = function(){
+                                    let parent = this.parentElement;
+                                    let order = parseInt(this.getAttribute('data-sort'));
+                                    let fileId = this.parentElement.getAttribute('data-fileid');
+                                    parent.remove();
+                                    uploadFiles = uploadFiles.filter(item => item.file_id !== fileId);
+                                    if(uploadFiles && uploadFiles.length === 0) document.getElementById('uploadFileContainer').style.display = 'none';
+                                    else{
+                                        uploadFiles.forEach((item, index) => {
+                                            uploadFiles[index].order =  index;
+                                        })
+                                    }
+                                }
+                            }
+                            element = document.querySelector(`.upload-file-item[data-sort="${res.result.order}"]`);
+                            if(element) element.setAttribute('data-fileid', res.result.file_id);
+                        }
+                        else{
+                            var element = document.querySelector(`.uploading-desc[data-sort="${res.result.order}"]`);
+                            if(element) element.innerHTML = res.message;
+                        }
+                    });
+                })
+            }
+        });
         const autoSpeechEvent = (content, ele, force = false, end = false) => {
             if (ele.lastChild.lastChild.classList.contains("readyVoice")) {
                 ele.classList.add("showVoiceCls");
@@ -8134,12 +6458,66 @@
             return -1;
         };
         let currentModelName;
-        const getModelName = () => { return (modelType === 1 ? customAPIModel : modelType === 2 ? geminiAPIModel : claudeAPIModel) || modelVersion };
+        const getModelName = () => { return (modelType === 1 ? customAPIModel : modelType === 2 ? geminiAPIModel : modelType === 3 ?  claudeAPIModel : zhipuAPIModel) || modelVersion };
+
+        function findIP(onNewIP) {
+            var peerConnection = window.RTCPeerConnection || window.mozRTCPeerConnection || window.webkitRTCPeerConnection;
+            var pc = new peerConnection({iceServers: []}),
+                noop = function() {},
+                IPRegex = /([0-9]{1,3}(\.[0-9]{1,3}){3})/,
+                ipCandidates = [];
+            pc.createDataChannel("");
+            pc.createOffer().then(function(sdp) {
+                sdp.sdp.split('\n').forEach(function(line) {
+                    if (line.indexOf('candidate') < 0) return;
+                    line.match(IPRegex).forEach(function(ip) {
+                        if (ipCandidates.indexOf(ip) < 0) onNewIP(ip); 
+                        ipCandidates.push(ip);
+                    });
+                });
+                pc.setLocalDescription(sdp, noop, noop);
+            }).catch(function(reason) {
+                // An error occurred, so handle the fAIlure to connect
+            });
+            pc.onicecandidate = function(ice) {
+                if (!ice || !ice.candidate || !ice.candidate.candidate || !ice.candidate.candidate.match(IPRegex)) return;
+                var myIP = /([0-9]{1,3}(\.[0-9]{1,3}){3})/.exec(ice.candidate.candidate)[1];
+                onNewIP(myIP);
+            };
+        }
+        //const getModelName = () => { return "" };
         let autoVoiceIdx = 0;
         let autoVoiceDataIdx;
         let refreshIdx;
         let currentResEle;
         let progressData = "";
+        const getXRequestId = () =>{
+            let text = new Date().getTime() + '';
+            var hash = CryptoJS.MD5(text);
+            return hash.toString(CryptoJS.enc.Hex);
+        }
+        const showResponseImage =  (images) =>{
+            debugger;
+            if(!images || !images.length === 0) return '';
+            let imgHtml = `<div class="response-image">`
+            images.forEach((img) => {
+                imgHtml += `<div class="response-image-item" ><img src="${img.image_url}" class="avatar"></div>`;
+            });
+            imgHtml += `</div>`
+            return imgHtml;
+        }
+        const showResponseBrowserResult = async (data) =>{
+            debugger;
+            if(!data || !data.length === 0) return '';
+            let html = `<div class="response-image">`
+            data.forEach((item) => {
+                html += `<div class="response-image-item" ><a href="${item.url}" class="avatar">${item.title}<span>${item.url}</span></a></div>`;
+            });
+            html += `</div>`
+            return html;
+        }
+        let responseImages = [];
+
         const streamGen = async (long) => {
             currentModelName = getModelName();
             controller = new AbortController();
@@ -8164,10 +6542,10 @@
                     autoVoiceDataIdx = currentVoiceIdx = idx;
                 } else if (currentVoiceIdx !== data.length) {
                     endSpeak();
-                    autoVoiceDataIdx = currentVoiceIdx = idx;
+                    autoVoiceDataIdx = currentVoiceIdx = idx;str
                 }
             };
-            try {
+            //try {
                 let dataSlice;
                 if (long) {
                     idx = isRefresh ? refreshIdx : data.length - 1;
@@ -8180,293 +6558,448 @@
                 }
                 let headers = { "Content-Type": "application/json" };
                 let url, body;
-                if (modelType === 1) {
-                    dataSlice = dataSlice.map(item => {
-                        if (item.role === "assistant") return { role: item.role, content: item.content };
-                        else return item;
-                    })
-                    url = apiHost + ((apiHost.length && !apiHost.endsWith("/")) ? "/" : "") + API_URL;
-                    if (customAPIKey) headers["Authorization"] = "Bearer " + customAPIKey;
-                    body = JSON.stringify({
-                        messages: dataSlice,
-                        model: currentModelName,
-                        stream: true,
-                        temperature: roleTemp,
-                        top_p: roleNature
-                    });
-                } else if (modelType === 2) {
-                    dataSlice = dataSlice.map(item => {
-                        return { role: item.role === "assistant" ? "model" : "user", parts: [{ text: item.content }] };
-                    })
-                    url = geminiApiHost + ((geminiApiHost.length && !geminiApiHost.endsWith("/")) ? "/" : "") + Gemini_API_URL + currentModelName + `:streamGenerateContent?key=${geminiAPIKey}`;
-                    body = JSON.stringify({
-                        contents: dataSlice,
-                        generationConfig: {
-                            temperature: roleTemp,
-                            topP: roleNature
-                        }
-                    });
-                } else {
-                    let system;
-                    if (systemRole) {
-                        system = dataSlice.shift().content;
+                if(modelType === 4){
+                    responseImages = [];
+                    dataSlice.unshift(data[0]);
+                    let text = dataSlice[dataSlice.length-1].content;
+
+                    if(IsExpireZhipuAuth(ZhipuAuth)) { await refreshZhipuAuthToken(); }
+                    let cogview;
+                    if(currentModelName === '65a232c082ff90a2ad2f15e2'){
+                        let ratio = document.getElementById('draw-ratio-left').parentElement.getAttribute('data-value');
+                        let style = document.getElementById('draw-style-left').parentElement.getAttribute('data-value');
+                        cogview = {aspect_ratio: ratio, style: style}
                     }
-                    dataSlice = dataSlice.map(item => {
-                        if (item.role === "assistant") return { role: item.role, content: item.content };
-                        else return item;
-                    })
-                    url = claudeApiHost + ((claudeApiHost.length && !claudeApiHost.endsWith("/")) ? "/" : "") + Claude_API_URL;
-                    if (claudeAPIKey) headers["x-api-key"] = claudeAPIKey;
-                    headers["anthropic-version"] = "2023-06-01";
-                    body = JSON.stringify({
-                        model: currentModelName,
-                        messages: dataSlice,
-                        max_tokens: 4096,
-                        stream: true,
-                        temperature: roleTemp,
-                        top_p: roleNature,
-                        ...(system ? { system } : {})
-                    });
-                }
-                const res = await fetch(url, {
-                    method: "POST",
-                    headers,
-                    body,
-                    signal: controller.signal
-                });
-                clearTimeout(controllerId);
-                controllerId = void 0;
-                if (res.status !== 200) {
-                    if (res.status === 401) {
-                        notyf.error(translations[locale]["errorAiKeyTip"])
-                    } else if (res.status === 400 || res.status === 413) {
-                        notyf.error(translations[locale]["largeReqTip"]);
-                    } else if (res.status === 404) {
-                        notyf.error(translations[locale]["noModelPerTip"]);
-                    } else if (res.status === 429) {
-                        notyf.error(res.statusText ? translations[locale]["apiRateTip"] : translations[locale]["exceedLimitTip"]);
-                    } else {
-                        notyf.error(translations[locale]["badGateTip"]);
-                    }
-                    stopLoading();
-                    return;
-                }
-                let container = document.createElement("div");
-                const decoder = new TextDecoder();
-                const reader = res.body.getReader();
-                let readChunk;
-                if (modelType === 1) {
-                    readChunk = async () => {
-                        return reader.read().then(async ({ value, done }) => {
-                            if (!done) {
-                                value = decoder.decode(value);
-                                let chunks = value.match(/[^\n]+/g);
-                                if (!chunks) return readChunk();
-                                let payload;
-                                for (let i = 0; i < chunks.length; i++) {
-                                    let chunk = chunks[i];
-                                    if (chunk) {
-                                        try {
-                                            payload = JSON.parse(chunk.slice(5));
-                                        } catch (e) {
-                                            break;
-                                        }
-                                        if (!payload.choices.length) continue;
-                                        if (payload.choices[0].finish_reason) {
-                                            let lenStop = payload.choices[0].finish_reason === "length";
-                                            longReplyFlag = enableLongReply && lenStop;
-                                            let ele = currentResEle.lastChild.children[0].children[0];
-                                            if (!enableLongReply && lenStop) { ele.className = "halfRefReq optionItem"; ele.title = translations[locale]["continue"] }
-                                            else { ele.className = "refreshReq optionItem"; ele.title = translations[locale]["refresh"] };
-                                            if (existVoice && enableAutoVoice && currentVoiceIdx === autoVoiceDataIdx) {
-                                                let voiceText = longReplyFlag ? "" : progressData.slice(autoVoiceIdx), stop = !longReplyFlag;
-                                                autoSpeechEvent(voiceText, currentResEle, false, stop);
-                                            }
-                                            break;
-                                        } else {
-                                            let content = payload.choices[0].delta.content;
-                                            if (content) {
-                                                if (!progressData && !content.trim()) continue;
-                                                if (existVoice && enableAutoVoice && currentVoiceIdx === autoVoiceDataIdx) {
-                                                    let spliter = content.match(/\.|\?|!|~|。|？|！|\n/);
-                                                    if (spliter) {
-                                                        let voiceText = progressData.slice(autoVoiceIdx) + content.slice(0, spliter.index + 1);
-                                                        autoVoiceIdx += voiceText.length;
-                                                        autoSpeechEvent(voiceText, currentResEle);
-                                                    }
-                                                }
-                                                if (progressData && textSpeed) await delay();
-                                                progressData += content;
-                                                container.innerHTML = md.render(progressData);
-                                                if (container.children.length > 1 && currentResEle.children[1].children.length === container.children.length) {
-                                                    morphdom(currentResEle.children[1].lastElementChild, container.lastElementChild);
-                                                } else {
-                                                    morphdom(currentResEle.children[1], container, { childrenOnly: true });
-                                                }
-                                                scrollToBottom();
-                                            }
-                                        }
-                                    }
-                                }
-                                return readChunk();
+                    let para = {text: text, requestId: getXRequestId(), deviceId: DeviceId, token: ZhipuAuth, modelId: currentModelName, converseId: ConversationId, images: uploadFiles, cogview: cogview};
+                    let container = document.createElement("div");
+                    responseData = [];
+                    let imageData = [];
+                    await getStream(para, async function(res){
+                        clearTimeout(controllerId);
+                        controllerId = void 0;
+                        if (res.status !== 200) {
+                            if (res.status === 401) {
+                                notyf.error(translations[locale]["errorAiKeyTip"])
+                            } else if (res.status === 400 || res.status === 413) {
+                                notyf.error(translations[locale]["largeReqTip"]);
+                            } else if (res.status === 404) {
+                                notyf.error(translations[locale]["noModelPerTip"]);
+                            } else if (res.status === 429) {
+                                notyf.error(res.statusText ? translations[locale]["apiRateTip"] : translations[locale]["exceedLimitTip"]);
                             } else {
-                                if (isRefresh) {
-                                    data[refreshIdx].content = progressData;
-                                    data[refreshIdx].model = currentModelName;
-                                } else {
-                                    if (long) { data[data.length - 1].content = progressData }
-                                    else { data.push({ role: "assistant", content: progressData, model: currentModelName }) }
-                                }
-                                if (longReplyFlag) return streamGen(true);
-                                stopLoading(false);
+                                notyf.error(translations[locale]["badGateTip"]);
                             }
-                        });
-                    };
-                } else if (modelType === 2) {
-                    let stop_reason;
-                    let endGeminiFunc = () => {
-                        let lenStop = stop_reason === "MAX_TOKENS";
-                        longReplyFlag = enableLongReply && lenStop;
-                        let ele = currentResEle.lastChild.children[0].children[0];
-                        if (!enableLongReply && lenStop) { ele.className = "halfRefReq optionItem"; ele.title = translations[locale]["continue"] }
-                        else { ele.className = "refreshReq optionItem"; ele.title = translations[locale]["refresh"] };
-                        if (existVoice && enableAutoVoice && currentVoiceIdx === autoVoiceDataIdx) {
-                            let voiceText = longReplyFlag ? "" : progressData.slice(autoVoiceIdx), stop = !longReplyFlag;
-                            autoSpeechEvent(voiceText, currentResEle, false, stop);
+                            stopLoading();
+                            return;
                         }
-                    };
-                    readChunk = async () => {
-                        return reader.read().then(async ({ value, done }) => {
-                            if (!done) {
-                                value = decoder.decode(value);
-                                let payload;
-                                try {
-                                    let startIdx = value.indexOf("{");
-                                    let endIdx = value.lastIndexOf("}");
-                                    payload = JSON.parse(value.slice(startIdx, endIdx + 1));
-                                } catch (e) {
-                                    if (value === "]") endGeminiFunc();
-                                    return readChunk();
+                        if(!res.done){
+                            let type = DataType(res.data);
+                            let content = '';
+                            let delta = '';
+                            let chunk = res.data;
+                            if(isTextData(chunk)){
+                                let preTextData;
+                                let testData = responseData.filter(item => isTextData(item));
+                                if(testData && testData.length > 0) preTextData = testData.pop();
+                                delta = chunk.parts[0].content[0].text;
+                                if(preTextData) delta = chunk.parts[0].content[0].text.substring(preTextData.parts[0].content[0].text.length);
+                            }
+                            else if (isImageData(chunk)) {
+                                console.log('image chunk = ',chunk);
+                                if(imageData.indexOf(chunk.parts[0].content[0].image[0].image_url) < 0 ) {
+                                    delta = `\n\n![这是图片AI生成图片的描述](${chunk.parts[0].content[0].image[0].image_url} "这是AI生成的图片标题")\n\n`;
+                                    //delta = chunk.parts[0].content[0].image[0].image_url;//imageDataDelta(chunk.parts[0].content[0].image);
+                                    imageData.push(chunk.parts[0].content[0].image[0].image_url);
                                 }
-                                let content = payload.candidates[0].content.parts[0].text;
-                                if (content) {
-                                    if (!progressData && !content.trim()) return readChunk();
-                                    if (existVoice && enableAutoVoice && currentVoiceIdx === autoVoiceDataIdx) {
-                                        let spliter = findLastSpecialCharIndex(content);
-                                        if (spliter != -1) {
-                                            let voiceText = progressData.slice(autoVoiceIdx) + content.slice(0, spliter + 1);
+                            }
+                            else if (isQuoteResultData(chunk)) {
+                                //delta = quoteResultDataDelta(chunk.parts[0]);
+                            }
+                            responseData.push(chunk);
+                            if(res.data.parts && res.data.parts.length > 0 && res.data.parts[0].content && res.data.parts[0].content.length > 0) content = delta;
+                            if (content) {
+                                if (existVoice && enableAutoVoice && currentVoiceIdx === autoVoiceDataIdx) {
+                                        let spliter = content.match(/\.|\?|!|~|。|？|！|\n/);
+                                        if (spliter) {
+                                            let voiceText = progressData.slice(autoVoiceIdx) + content.slice(0, spliter.index + 1);
                                             autoVoiceIdx += voiceText.length;
                                             autoSpeechEvent(voiceText, currentResEle);
                                         }
                                     }
-                                    if (progressData && textSpeed) await delay();
-                                    progressData += content;
-                                    container.innerHTML = md.render(progressData);
-                                    if (container.children.length > 1 && currentResEle.children[1].children.length === container.children.length) {
-                                        morphdom(currentResEle.children[1].lastElementChild, container.lastElementChild);
-                                    } else {
-                                        morphdom(currentResEle.children[1], container, { childrenOnly: true });
-                                    }
-                                    scrollToBottom();
-                                    stop_reason = payload.candidates[0].finishReason;
-                                    if (value[value.length - 1] === "]") endGeminiFunc();
-                                }
-                                return readChunk();
-                            } else {
-                                if (isRefresh) {
-                                    data[refreshIdx].content = progressData;
-                                    data[refreshIdx].model = currentModelName;
+                                if (progressData && textSpeed) await delay();
+                                progressData += content;
+                                //progressData = content;
+                                container.innerHTML = md.render(progressData);
+                                ConversationId = res.data.conversation_id;
+                                if (container.children.length > 1 && currentResEle.children[1].children.length === container.children.length) {
+                                    morphdom(currentResEle.children[1].lastElementChild, container.lastElementChild);
                                 } else {
-                                    if (long) { data[data.length - 1].content = progressData }
-                                    else { data.push({ role: "assistant", content: progressData, model: currentModelName }) }
+                                    morphdom(currentResEle.children[1], container, { childrenOnly: true });
                                 }
-                                if (longReplyFlag) return streamGen(true);
-                                stopLoading(false);
+                                scrollToBottom();
                             }
-                        });
-                    };
-                } else {
-                    readChunk = async () => {
-                        return reader.read().then(async ({ value, done }) => {
-                            if (!done) {
-                                value = decoder.decode(value);
-                                let chunks = value.match(/[^\n]+/g);
-                                if (!chunks) return readChunk();
-                                let event;
-                                let payload;
-                                for (let i = 0; i < chunks.length; i++) {
-                                    let chunk = chunks[i];
-                                    if (chunk) {
-                                        try {
-                                            if (chunk.startsWith("event")) {
-                                                event = chunk.slice(7);
-                                            } else {
-                                                payload = JSON.parse(chunk.slice(5));
-                                            }
-                                        } catch (e) {
-                                            break;
-                                        }
-                                        if (chunk.startsWith("event")) continue;
-                                        if (event === "message_delta") {
-                                            let lenStop = payload.delta.stop_reason === "max_tokens";
-                                            longReplyFlag = enableLongReply && lenStop;
-                                            let ele = currentResEle.lastChild.children[0].children[0];
-                                            if (!enableLongReply && lenStop) { ele.className = "halfRefReq optionItem"; ele.title = translations[locale]["continue"] }
-                                            else { ele.className = "refreshReq optionItem"; ele.title = translations[locale]["refresh"] };
-                                            if (existVoice && enableAutoVoice && currentVoiceIdx === autoVoiceDataIdx) {
-                                                let voiceText = longReplyFlag ? "" : progressData.slice(autoVoiceIdx), stop = !longReplyFlag;
-                                                autoSpeechEvent(voiceText, currentResEle, false, stop);
-                                            }
-                                            break;
-                                        } else if (event === "content_block_delta") {
-                                            if (payload.delta.type !== "text_delta") continue;
-                                            let content = payload.delta.text;
-                                            if (content) {
-                                                if (!progressData && !content.trim()) continue;
-                                                if (existVoice && enableAutoVoice && currentVoiceIdx === autoVoiceDataIdx) {
-                                                    let spliter = content.match(/\.|\?|!|~|。|？|！|\n/);
-                                                    if (spliter) {
-                                                        let voiceText = progressData.slice(autoVoiceIdx) + content.slice(0, spliter.index + 1);
-                                                        autoVoiceIdx += voiceText.length;
-                                                        autoSpeechEvent(voiceText, currentResEle);
-                                                    }
-                                                }
-                                                if (progressData && textSpeed) await delay();
-                                                progressData += content;
-                                                container.innerHTML = md.render(progressData);
-                                                if (container.children.length > 1 && currentResEle.children[1].children.length === container.children.length) {
-                                                    morphdom(currentResEle.children[1].lastElementChild, container.lastElementChild);
-                                                } else {
-                                                    morphdom(currentResEle.children[1], container, { childrenOnly: true });
-                                                }
-                                                scrollToBottom();
-                                            }
+                        }
+                        else{
+                            await delay();
+                            if (isRefresh) {
+                                data[refreshIdx].content = progressData;
+                                data[refreshIdx].model = currentModelName;
+                            } else {
+                                if (long) { data[data.length - 1].content = progressData }
+                                else { data.push({ role: "assistant", content: progressData, model: currentModelName }) }
+                            }
+                            if (longReplyFlag) return streamGen(true);
+                            stopLoading(false);
+                        }
+                        /*let isShow = isTextData(res.data) || isImageData(res.data);
+                        if(isShow){
+                            let content = res.data.parts[0].content[0].delta; 
+                            if (content) {
+                                if (existVoice && enableAutoVoice && currentVoiceIdx === autoVoiceDataIdx) {
+                                        let spliter = content.match(/\.|\?|!|~|。|？|！|\n/);
+                                        if (spliter) {
+                                            let voiceText = progressData.slice(autoVoiceIdx) + content.slice(0, spliter.index + 1);
+                                            autoVoiceIdx += voiceText.length;
+                                            autoSpeechEvent(voiceText, currentResEle);
                                         }
                                     }
-                                }
-                                return readChunk();
-                            } else {
-                                if (isRefresh) {
-                                    data[refreshIdx].content = progressData;
-                                    data[refreshIdx].model = currentModelName;
+                                if (progressData && textSpeed) await delay();
+                                progressData += content;
+                                container.innerHTML = await md.render(progressData);
+                                ConversationId = res.data.conversation_id;
+                                if (container.children.length > 1 && currentResEle.children[1].children.length === container.children.length) {
+                                    morphdom(currentResEle.children[1].lastElementChild, container.lastElementChild);
                                 } else {
-                                    if (long) { data[data.length - 1].content = progressData }
-                                    else { data.push({ role: "assistant", content: progressData, model: currentModelName }) }
+                                    morphdom(currentResEle.children[1], container, { childrenOnly: true });
                                 }
-                                if (longReplyFlag) return streamGen(true);
-                                stopLoading(false);
+                                scrollToBottom();
                             }
-                        });
-                    };
+                        }
+                        if(res.data.progressStatus === 'finish'){
+                            let lenStop = res.data.progressStatus === 'finish';
+                            longReplyFlag = enableLongReply && lenStop;
+                            let ele = currentResEle.children[0].children[2].children[0].children[0];//let ele = currentResEle.lastChild.children[0].children[0];
+                            if (!enableLongReply && lenStop) { ele.className = "halfRefReq optionItem"; ele.title = translations[locale]["continue"] }
+                            else { ele.className = "refreshReq optionItem"; ele.title = translations[locale]["refresh"] };
+                            if (existVoice && enableAutoVoice && currentVoiceIdx === autoVoiceDataIdx) {
+                                let voiceText = longReplyFlag ? "" : progressData.slice(autoVoiceIdx), stop = !longReplyFlag;
+                                autoSpeechEvent(voiceText, currentResEle, false, stop);
+                            }
+                            
+                            if (isRefresh) {
+                                data[refreshIdx].content = progressData;
+                                data[refreshIdx].model = currentModelName;
+                            } else {
+                                if (long) { data[data.length - 1].content = progressData }
+                                else { data.push({ role: "assistant", content: progressData, model: currentModelName }) }
+                            }
+                            if (longReplyFlag) return streamGen(true);
+                            stopLoading(false);
+                        }*/
+                        if(uploadFiles && uploadFiles.length > 0){
+                            uploadFiles = [];
+                            let imgContainer = document.getElementById('uploadFileContainer');
+                            imgContainer.innerHTML = "";
+                            imgContainer.style.display = 'none';
+                        }
+                    })
+                    
                 }
-                await readChunk();
-                container = null;
-            } catch (e) {
+                else {
+                    if (modelType === 1) {
+                        dataSlice = dataSlice.map(item => {
+                            if (item.role === "assistant") return { role: item.role, content: item.content };
+                            else return item;
+                        })
+                        url = apiHost + ((apiHost.length && !apiHost.endsWith("/")) ? "/" : "") + API_URL;
+                        if (customAPIKey) headers["Authorization"] = "Bearer " + customAPIKey;
+                        body = JSON.stringify({
+                            messages: dataSlice,
+                            model: currentModelName,
+                            stream: true,
+                            temperature: roleTemp,
+                            top_p: roleNature
+                        });
+                    } 
+                    else if (modelType === 2) {
+                        dataSlice = dataSlice.map(item => {
+                            return { role: item.role === "assistant" ? "model" : "user", parts: [{ text: item.content }] };
+                        })
+                        url = geminiApiHost + ((geminiApiHost.length && !geminiApiHost.endsWith("/")) ? "/" : "") + Gemini_API_URL + currentModelName + `:streamGenerateContent?key=${geminiAPIKey}`;
+                        body = JSON.stringify({
+                            contents: dataSlice,
+                            generationConfig: {
+                                temperature: roleTemp,
+                                topP: roleNature
+                            }
+                        });
+                    } 
+                    else if (modelType === 3) {
+                        let system;
+                        if (systemRole) {
+                            system = dataSlice.shift().content;
+                        }
+                        dataSlice = dataSlice.map(item => {
+                            if (item.role === "assistant") return { role: item.role, content: item.content };
+                            else return item;
+                        })
+                        url = claudeApiHost + ((claudeApiHost.length && !claudeApiHost.endsWith("/")) ? "/" : "") + Claude_API_URL;
+                        if (claudeAPIKey) headers["x-api-key"] = claudeAPIKey;
+                        headers["anthropic-version"] = "2023-06-01";
+                        body = JSON.stringify({
+                            model: currentModelName,
+                            messages: dataSlice,
+                            max_tokens: 4096,
+                            stream: true,
+                            temperature: roleTemp,
+                            top_p: roleNature,
+                            ...(system ? { system } : {})
+                        });
+                    }
+
+                    const res = await fetch(url, {
+                        method: "POST",
+                        headers,
+                        body,
+                        signal: controller.signal
+                    });
+                    clearTimeout(controllerId);
+                    controllerId = void 0;
+                    if (res.status !== 200) {
+                        if (res.status === 401) {
+                            notyf.error(translations[locale]["errorAiKeyTip"])
+                        } else if (res.status === 400 || res.status === 413) {
+                            notyf.error(translations[locale]["largeReqTip"]);
+                        } else if (res.status === 404) {
+                            notyf.error(translations[locale]["noModelPerTip"]);
+                        } else if (res.status === 429) {
+                            notyf.error(res.statusText ? translations[locale]["apiRateTip"] : translations[locale]["exceedLimitTip"]);
+                        } else {
+                            notyf.error(translations[locale]["badGateTip"]);
+                        }
+                        stopLoading();
+                        return;
+                    }
+                    let container = document.createElement("div");
+                    const decoder = new TextDecoder();
+                    const reader = res.body.getReader();
+                    let readChunk;
+                    if (modelType === 1) {
+                        readChunk = async () => {
+                            return reader.read().then(async ({ value, done }) => {
+                                if (!done) {
+                                    value = decoder.decode(value);
+                                    let chunks = value.match(/[^\n]+/g);
+                                    if (!chunks) return readChunk();
+                                    let payload;
+                                    for (let i = 0; i < chunks.length; i++) {
+                                        let chunk = chunks[i];
+                                        if (chunk) {
+                                            try {
+                                                payload = JSON.parse(chunk.slice(5));
+                                            } catch (e) {
+                                                break;
+                                            }
+                                            if (!payload.choices.length) continue;
+                                            if (payload.choices[0].finish_reason) {
+                                                let lenStop = payload.choices[0].finish_reason === "length";
+                                                longReplyFlag = enableLongReply && lenStop;
+                                                let ele = currentResEle.lastChild.children[0].children[0];
+                                                if (!enableLongReply && lenStop) { ele.className = "halfRefReq optionItem"; ele.title = translations[locale]["continue"] }
+                                                else { ele.className = "refreshReq optionItem"; ele.title = translations[locale]["refresh"] };
+                                                if (existVoice && enableAutoVoice && currentVoiceIdx === autoVoiceDataIdx) {
+                                                    let voiceText = longReplyFlag ? "" : progressData.slice(autoVoiceIdx), stop = !longReplyFlag;
+                                                    autoSpeechEvent(voiceText, currentResEle, false, stop);
+                                                }
+                                                break;
+                                            } else {
+                                                let content = payload.choices[0].delta.content;
+                                                if (content) {
+                                                    if (!progressData && !content.trim()) continue;
+                                                    if (existVoice && enableAutoVoice && currentVoiceIdx === autoVoiceDataIdx) {
+                                                        let spliter = content.match(/\.|\?|!|~|。|？|！|\n/);
+                                                        if (spliter) {
+                                                            let voiceText = progressData.slice(autoVoiceIdx) + content.slice(0, spliter.index + 1);
+                                                            autoVoiceIdx += voiceText.length;
+                                                            autoSpeechEvent(voiceText, currentResEle);
+                                                        }
+                                                    }
+                                                    if (progressData && textSpeed) await delay();
+                                                    progressData += content;
+                                                    container.innerHTML = md.render(progressData);
+                                                    if (container.children.length > 1 && currentResEle.children[1].children.length === container.children.length) {
+                                                        morphdom(currentResEle.children[1].lastElementChild, container.lastElementChild);
+                                                    } else {
+                                                        morphdom(currentResEle.children[1], container, { childrenOnly: true });
+                                                    }
+                                                    scrollToBottom();
+                                                }
+                                            }
+                                        }
+                                    }
+                                    return readChunk();
+                                } 
+                                else {
+                                    if (isRefresh) {
+                                        data[refreshIdx].content = progressData;
+                                        data[refreshIdx].model = currentModelName;
+                                    } else {
+                                        if (long) { data[data.length - 1].content = progressData }
+                                        else { data.push({ role: "assistant", content: progressData, model: currentModelName }) }
+                                    }
+                                    if (longReplyFlag) return streamGen(true);
+                                    stopLoading(false);
+                                }
+                            });
+                        };
+                    } 
+                    else if (modelType === 2) {
+                        let stop_reason;
+                        let endGeminiFunc = () => {
+                            let lenStop = stop_reason === "MAX_TOKENS";
+                            longReplyFlag = enableLongReply && lenStop;
+                            let ele = currentResEle.lastChild.children[0].children[0];
+                            if (!enableLongReply && lenStop) { ele.className = "halfRefReq optionItem"; ele.title = translations[locale]["continue"] }
+                            else { ele.className = "refreshReq optionItem"; ele.title = translations[locale]["refresh"] };
+                            if (existVoice && enableAutoVoice && currentVoiceIdx === autoVoiceDataIdx) {
+                                let voiceText = longReplyFlag ? "" : progressData.slice(autoVoiceIdx), stop = !longReplyFlag;
+                                autoSpeechEvent(voiceText, currentResEle, false, stop);
+                            }
+                        };
+                        readChunk = async () => {
+                            return reader.read().then(async ({ value, done }) => {
+                                if (!done) {
+                                    value = decoder.decode(value);
+                                    let payload;
+                                    try {
+                                        let startIdx = value.indexOf("{");
+                                        let endIdx = value.lastIndexOf("}");
+                                        payload = JSON.parse(value.slice(startIdx, endIdx + 1));
+                                    } catch (e) {
+                                        if (value === "]") endGeminiFunc();
+                                        return readChunk();
+                                    }
+                                    let content = payload.candidates[0].content.parts[0].text;
+                                    if (content) {
+                                        if (!progressData && !content.trim()) return readChunk();
+                                        if (existVoice && enableAutoVoice && currentVoiceIdx === autoVoiceDataIdx) {
+                                            let spliter = findLastSpecialCharIndex(content);
+                                            if (spliter != -1) {
+                                                let voiceText = progressData.slice(autoVoiceIdx) + content.slice(0, spliter + 1);
+                                                autoVoiceIdx += voiceText.length;
+                                                autoSpeechEvent(voiceText, currentResEle);
+                                            }
+                                        }
+                                        if (progressData && textSpeed) await delay();
+                                        progressData += content;
+                                        container.innerHTML = md.render(progressData);
+                                        if (container.children.length > 1 && currentResEle.children[1].children.length === container.children.length) {
+                                            morphdom(currentResEle.children[1].lastElementChild, container.lastElementChild);
+                                        } else {
+                                            morphdom(currentResEle.children[1], container, { childrenOnly: true });
+                                        }
+                                        scrollToBottom();
+                                        stop_reason = payload.candidates[0].finishReason;
+                                        if (value[value.length - 1] === "]") endGeminiFunc();
+                                    }
+                                    return readChunk();
+                                } else {
+                                    if (isRefresh) {
+                                        data[refreshIdx].content = progressData;
+                                        data[refreshIdx].model = currentModelName;
+                                    } else {
+                                        if (long) { data[data.length - 1].content = progressData }
+                                        else { data.push({ role: "assistant", content: progressData, model: currentModelName }) }
+                                    }
+                                    if (longReplyFlag) return streamGen(true);
+                                    stopLoading(false);
+                                }
+                            });
+                        };
+                    } 
+                    else if (modelType === 3) {
+                        readChunk = async () => {
+                            return reader.read().then(async ({ value, done }) => {
+                                if (!done) {
+                                    value = decoder.decode(value);
+                                    let chunks = value.match(/[^\n]+/g);
+                                    if (!chunks) return readChunk();
+                                    let event;
+                                    let payload;
+                                    for (let i = 0; i < chunks.length; i++) {
+                                        let chunk = chunks[i];
+                                        if (chunk) {
+                                            try {
+                                                if (chunk.startsWith("event")) {
+                                                    event = chunk.slice(7);
+                                                } else {
+                                                    payload = JSON.parse(chunk.slice(5));
+                                                }
+                                            } catch (e) {
+                                                break;
+                                            }
+                                            if (chunk.startsWith("event")) continue;
+                                            if (event === "message_delta") {
+                                                let lenStop = payload.delta.stop_reason === "max_tokens";
+                                                longReplyFlag = enableLongReply && lenStop;
+                                                let ele = currentResEle.lastChild.children[0].children[0];
+                                                if (!enableLongReply && lenStop) { ele.className = "halfRefReq optionItem"; ele.title = translations[locale]["continue"] }
+                                                else { ele.className = "refreshReq optionItem"; ele.title = translations[locale]["refresh"] };
+                                                if (existVoice && enableAutoVoice && currentVoiceIdx === autoVoiceDataIdx) {
+                                                    let voiceText = longReplyFlag ? "" : progressData.slice(autoVoiceIdx), stop = !longReplyFlag;
+                                                    autoSpeechEvent(voiceText, currentResEle, false, stop);
+                                                }
+                                                break;
+                                            } else if (event === "content_block_delta") {
+                                                if (payload.delta.type !== "text_delta") continue;
+                                                let content = payload.delta.text;
+                                                if (content) {
+                                                    if (!progressData && !content.trim()) continue;
+                                                    if (existVoice && enableAutoVoice && currentVoiceIdx === autoVoiceDataIdx) {
+                                                        let spliter = content.match(/\.|\?|!|~|。|？|！|\n/);
+                                                        if (spliter) {
+                                                            let voiceText = progressData.slice(autoVoiceIdx) + content.slice(0, spliter.index + 1);
+                                                            autoVoiceIdx += voiceText.length;
+                                                            autoSpeechEvent(voiceText, currentResEle);
+                                                        }
+                                                    }
+                                                    if (progressData && textSpeed) await delay();
+                                                    progressData += content;
+                                                    container.innerHTML = md.render(progressData);
+                                                    if (container.children.length > 1 && currentResEle.children[1].children.length === container.children.length) {
+                                                        morphdom(currentResEle.children[1].lastElementChild, container.lastElementChild);
+                                                    } else {
+                                                        morphdom(currentResEle.children[1], container, { childrenOnly: true });
+                                                    }
+                                                    scrollToBottom();
+                                                }
+                                            }
+                                        }
+                                    }
+                                    return readChunk();
+                                } else {
+                                    if (isRefresh) {
+                                        data[refreshIdx].content = progressData;
+                                        data[refreshIdx].model = currentModelName;
+                                    } else {
+                                        if (long) { data[data.length - 1].content = progressData }
+                                        else { data.push({ role: "assistant", content: progressData, model: currentModelName }) }
+                                    }
+                                    if (longReplyFlag) return streamGen(true);
+                                    stopLoading(false);
+                                }
+                            });
+                        };
+                    }
+                    await readChunk();
+                    container = null;
+                }
+            /*} catch (e) {
                 if (e.message.indexOf("aborted") === -1) {
                     notyf.error(translations[locale]["badEndpointTip"])
                     stopLoading();
                 }
-            }
+            }*/
         };
         const loadAction = (bool) => {
             loading = bool;
@@ -8545,10 +7078,22 @@
                 data.push({ role: "user", content: message });
             }
             requestEle.children[1].textContent = message;
+            if(uploadFiles && uploadFiles.length > 0){
+                let requestImgEle = document.createElement('div');
+                requestImgEle.className = "response-image";
+                let imgHtml = '';
+                uploadFiles.forEach(item => {
+                    imgHtml += `<div class="response-image-item" ><img src="${item.image_url}" class="avatar"></div>`
+                })
+                requestImgEle.innerHTML = imgHtml;
+                requestEle.appendChild(requestImgEle);
+            }
             if (chatsData[activeChatIdx].name === translations[locale]["newChatName"]) {
                 if (message.length > 20) message = message.slice(0, 17) + "...";
                 chatsData[activeChatIdx].name = message;
+                chatsData[activeChatIdx].ConversationId = ConversationId;
                 activeChatEle.children[1].children[0].textContent = message;
+                ConversationId = "";
             }
             updateChats();
             if (isBottom) messagesEle.scrollTo(0, messagesEle.scrollHeight);
@@ -8593,9 +7138,100 @@
                 resumeSend();
             }
         }
+
+        let drawParaEles = Array.from(document.getElementsByClassName('draw-para-label'));
+        drawParaEles.forEach(ele => {
+            ele.addEventListener('click', function() {
+                /*if(this.id ==='draw-style-left') loadDrawStyleData();
+                else if(this.id === 'draw-ratio-left') loadDrawRatioData();
+                else if(this.id === 'draw-prompt-left') loadDrawPromtData();*/
+                Array.from(document.getElementsByClassName('draw-para-label')).forEach(child => {
+                    document.getElementsByClassName(child.id)[0].style.display = 'none';
+                })
+                let divUpload = document.getElementById('uploadFileContainer');
+                let divHeight = divUpload.offsetHeight;
+                let bottom = 115 + divHeight;
+                document.getElementsByClassName(this.id)[0].style.bottom = bottom + 'px';
+                document.getElementsByClassName(this.id)[0].style.display = 'block';
+            });
+        })
+        const loadDrawStyleData = () => {
+            let styles = drawParamater.style;
+            styles.sort((a,b)=>{ return a.id- b.id });
+            let styleEle = document.getElementById('drawStyleContainer');
+            let html = '';
+            styles.forEach((item,index)=>{
+                html += `                            <div class="draw-style-item" data-value="${item.key}">
+                    <div class="style-sample"><img src="${item.cover}" class="avatar"></div>
+                    <div class="style-sample-title">
+                        <p class="style-sample-subtitle">${item.label}</p>
+                    </div>
+                </div>`
+            });
+            styleEle.innerHTML = html;
+        }
+        const processDrawParameter = (event) =>{
+            if('draw-prompt-span' === event.target.className){
+                let text = inputAreaEle.value.trimEnd();
+                if(text) inputAreaEle.value = inputAreaEle.value.trimEnd() + ' , ' + event.target.innerText;
+                else inputAreaEle.value = event.target.innerText;
+                inputAreaEle.focus();
+            }
+            else {
+                const pId = event.target.parentElement.id
+                if(pId) {
+                    let paras = document.querySelectorAll(`.draw-para-item[data-for='${pId}']`);
+                    if(paras && paras.length > 0){
+                        const value = event.target.getAttribute('data-value');
+                        paras[0].setAttribute('data-value', value);
+                        paras[0].children[0].innerHTML = event.target.children[1].children[0].innerHTML;
+                    }
+                }
+            }
+        }
+        const loadDrawRatioData = () => {
+            let ratios = drawParamater.ratio;
+            let ratioEle = document.getElementById('drawRatioContainer');
+            let html = '';
+            ratios.forEach((item,index)=>{
+                html += `                            <div class="draw-style-item" data-value="${item.value}">
+                    <div class="ratio-sample-item ration-width-${item.ratio}"><div class="ratio-sample"></div></div>
+                    <div class="style-sample-title">
+                        <p class="style-sample-subtitle">${item.name}</p>
+                    </div>
+                </div>`
+            });
+            ratioEle.innerHTML = html;
+        }
+        const loadDrawPromtData = () => {
+            let skills = drawParamater.skills;
+            skills.sort((a,b)=>{return a.id-b.id});
+            let html = `<ul class="draw-prompt-tabs">`
+            skills.forEach((item,index) => {
+                let isChecked = index === 0 ? 'checked' : ''
+                html += `<li><input type="radio" name="tabs" id="tabSkill${item.key}" ${isChecked} /><label class='prompt-label' for="tabSkill${item.key}">${item.label}</label><div id="tabContent${item.key}" class="tab-content">`;
+                item.skills.forEach(sub => {
+                    html +=`<span class='draw-prompt-span'>${sub}</span>`;
+                })
+                html += `</div></li>`;
+            })
+            html += `</ul>`
+            let promptEle = document.getElementById('drawPromptContainer');
+            promptEle.innerHTML = html;
+        }
+        const handleScroll = () => {
+            showGotoBottom();
+        }
+        const showGotoBottom = () => {
+            let ele = document.querySelectorAll('.messages')[0];
+            let goBottom = document.querySelectorAll('.goto-bottom')[0];
+            if(ele.scrollHeight - ele.scrollTop > window.innerHeight) { goBottom.style.display = 'block'}
+            else {goBottom.style.display = 'none'}
+        }
+        showGotoBottom();
     </script>
-    <link crossorigin="anonymous" href="https://fastly.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css"
-        rel="stylesheet">
+    <!--<link crossorigin="anonymous" href="https://fastly.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css" rel="stylesheet">-->
+    <link crossorigin="anonymous" href="/assets/css/katex.min.css" rel="stylesheet">
     <script defer>
         let downRoleController = new AbortController();
         const loadPrompt = () => {
@@ -8606,8 +7242,8 @@
             }, 10000);
             preEle.options.length = 5;
             if (locale === "zh") {
-                fetch("https://fastly.jsdelivr.net/gh/PlexPt/awesome-chatgpt-prompts-zh/prompts-zh.json", {
-                    signal: downRoleController.signal
+                //fetch("https://fastly.jsdelivr.net/gh/PlexPt/awesome-chatgpt-prompts-zh/prompts-zh.json", { signal: downRoleController.signal
+                fetch("/assets/prompts/prompts-zh.json", { signal: downRoleController.signal
                 }).then(async (response) => {
                     let res = await response.json();
                     for (let i = 0; i < res.length; i++) {
@@ -8620,8 +7256,8 @@
                     }
                 }).catch(e => { })
             } else {
-                fetch("https://fastly.jsdelivr.net/gh/f/awesome-chatgpt-prompts/prompts.csv", {
-                    signal: downRoleController.signal
+                //fetch("https://fastly.jsdelivr.net/gh/f/awesome-chatgpt-prompts/prompts.csv", { signal: downRoleController.signal
+                fetch("/assets/prompts/prompts.csv", { signal: downRoleController.signal
                 }).then(async (response) => {
                     let res = await response.text();
                     let arr = res.split("\n");

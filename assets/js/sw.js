@@ -1,9 +1,10 @@
-/*const cacheName = "caches-v0.9.8";
+const cacheName = "caches-v0.9.8";
 
 self.addEventListener("install", (e) => {
   e.waitUntil(
     caches.open(cacheName)
-      .then(cache => cache.addAll(["./", "./index.html", "./icon.png"]))
+      //.then(cache => cache.addAll(["./", "./index.html", "./icon.png"]))
+      .then(cache => cache.addAll(["/", "/index.html", "/icon.png"]))
   )
 });
 
@@ -38,4 +39,3 @@ self.addEventListener("activate", (e) => {
     })
   )
 });
-*/
